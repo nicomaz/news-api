@@ -2,6 +2,7 @@ const {
   convertTimestampToDate,
   createRef,
   formatComments,
+  isObject,
 } = require("../db/seeds/utils");
 
 describe("convertTimestampToDate", () => {
@@ -100,5 +101,17 @@ describe("formatComments", () => {
     const comments = [{ created_at: timestamp }];
     const formattedComments = formatComments(comments, {});
     expect(formattedComments[0].created_at).toEqual(new Date(timestamp));
+  });
+});
+
+describe("isObject", () => {
+  test("returns true when passed an object", () => {
+    expect(isObject({})).toBe(true);
+  });
+  test("returns false when passed an array", () => {
+    expect(isObject([])).toBe(false);
+  });
+  test("returns false when passed null", () => {
+    expect(isObject(null)).toBe(false);
   });
 });
