@@ -30,4 +30,3 @@ exports.selectArticle = (articleId) => {
       return rows[0];
     });
 };
-
