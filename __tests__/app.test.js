@@ -50,6 +50,22 @@ describe("GET /api/articles/articles:id", () => {
         expect(article).toMatchObject(expectedArticle);
       });
   });
+  it("400: responds with an error message if id is not a valid type", () => {
+    return request(app)
+      .get("/api/articles/article3")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
+  it("404: responds with an error message if id is a valid type but does not exist", () => {
+    return request(app)
+      .get("/api/articles/15")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Article not found");
+      });
+  });
 });
 
 describe("ANY /notAPath", () => {
