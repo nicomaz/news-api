@@ -92,6 +92,14 @@ describe("GET /api/articles", () => {
         expect(+article1[0].comment_count).toBe(11);
       });
   });
+});  
+it("200: articles should be sorted in descending order", () => {
+  return request(app)
+    .get("/api/articles")
+    .expect(200)
+    .then(({ body: { articles } }) => {
+      expect(articles).toBeSortedBy("created_at", { descending: true });
+    });
 });
 
 describe("ANY /notAPath", () => {
