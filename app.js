@@ -5,7 +5,7 @@ const {
   handlePsqlErrors,
   handleCustomErrors,
 } = require("./errors");
-const { getArticleById, getArticles } = require("./controllers/articles.controllers");
+const { getArticleById, getCommentsByArticleId } = require("./controllers/articles.controllers");
 const { handle404, getEndpoints } = require("./controllers/api.controllers");
 const app = express()
 
@@ -13,6 +13,7 @@ const app = express()
 app.get("/api", getEndpoints);
 app.get("/api/topics", getTopics);
 app.get("/api/articles/:article_id", getArticleById);
+app.get("/api/articles/:article_id/comments", getCommentsByArticleId)
 
 app.all("*", handle404);
 
