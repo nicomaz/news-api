@@ -30,6 +30,13 @@ describe("GET /api/topics", () => {
         });
       });
   });
+  it("endpoint.json contains api/topics/", () => {
+    return request(app)
+      .get("/api")
+      .then(({ body: { endpoints } }) => {
+        expect(endpoints).toHaveProperty("GET /api/topics");
+      });
+  });
 });
 
 describe("GET /api", () => {
@@ -76,6 +83,7 @@ describe("GET /api/articles", () => {
         expect(articles.length).toBe(13);
         articles.forEach((article) => {
           expect(article).toMatchObject(expectedArticle);
+          expect(article.body).toBe(undefined);
         });
       });
   });
@@ -92,14 +100,21 @@ describe("GET /api/articles", () => {
         expect(+article1[0].comment_count).toBe(11);
       });
   });
-});  
-it("200: articles should be sorted in descending order", () => {
-  return request(app)
-    .get("/api/articles")
-    .expect(200)
-    .then(({ body: { articles } }) => {
-      expect(articles).toBeSortedBy("created_at", { descending: true });
-    });
+  it("200: articles should be sorted in descending order", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+  it("endpoint.json contains api/articles/", () => {
+    return request(app)
+      .get("/api")
+      .then(({ body: { endpoints } }) => {
+        expect(endpoints).toHaveProperty("GET /api/articles");
+      });
+  });
 });
 
 describe("ANY /notAPath", () => {
