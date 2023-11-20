@@ -30,3 +30,14 @@ describe("GET /api/topics", () => {
       });
   });
 });
+
+describe("ANY /notAPath", () => {
+  test("404: responds with an error message if path is not found", () => {
+    return request(app)
+      .get("/notAPath")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Path not found");
+      });
+  });
+});
