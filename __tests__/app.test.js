@@ -31,6 +31,28 @@ describe("GET /api/topics", () => {
   });
 });
 
+describe("GET /api", () => {
+  it("200: responds with an object of available endpoints", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then(({ body: { endpoints } }) => {
+        const expectedEndpoint = {
+          description: expect.any(String),
+          queries: expect.any(Array),
+        };
+
+        for (let endpoint in endpoints) {
+          const endPointBody = endpoints[endpoint];
+          expect(endPointBody).toMatchObject(expectedEndpoint);
+          expect(endPointBody.exampleResponse).toBeInstanceOf(Object);
+          expect(!Array.isArray(endPointBody.exampleResponse)).toBe(true);
+          expect(endPointBody.exampleResponse !== null).toBe(true);
+        }
+      });
+  });
+});
+
 describe("ANY /notAPath", () => {
   test("404: responds with an error message if path is not found", () => {
     return request(app)
