@@ -31,6 +31,27 @@ describe("GET /api/topics", () => {
   });
 });
 
+describe("GET /api/articles/articles:id", () => {
+  it("200: responds with individual article", () => {
+    return request(app)
+      .get("/api/articles/2")
+      .expect(200)
+      .then(({ body: { article } }) => {
+        const expectedArticle = {
+          author: expect.any(String),
+          title: expect.any(String),
+          article_id: expect.any(Number),
+          body: expect.any(String),
+          topic: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          article_img_url: expect.any(String),
+        };
+        expect(article).toMatchObject(expectedArticle);
+      });
+  });
+});
+
 describe("ANY /notAPath", () => {
   test("404: responds with an error message if path is not found", () => {
     return request(app)
