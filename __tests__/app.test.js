@@ -8,6 +8,7 @@ const {
   topicData,
   userData,
 } = require("../db/data/test-data/index");
+const { isObject } = require("../db/seeds/utils");
 
 beforeEach(() => seed({ articleData, commentData, topicData, userData }));
 afterAll(() => db.end());
@@ -45,9 +46,11 @@ describe("GET /api", () => {
         for (let endpoint in endpoints) {
           const endPointBody = endpoints[endpoint];
           expect(endPointBody).toMatchObject(expectedEndpoint);
-          expect(endPointBody.exampleResponse).toBeInstanceOf(Object);
-          expect(!Array.isArray(endPointBody.exampleResponse)).toBe(true);
-          expect(endPointBody.exampleResponse !== null).toBe(true);
+          expect(isObject(endPointBody.exampleResponse)).toBe(true);
+
+          if (endPointBody.exampleRequest) {
+            expect(isObject(endPointBody.exampleRequest)).toBe(true);
+          }
         }
       });
   });
