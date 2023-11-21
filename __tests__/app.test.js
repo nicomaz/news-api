@@ -113,7 +113,19 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get("/api/articles/3/comments")
       .expect(200)
       .then(({ body: { comments } }) => {
+        const expectedComment = {
+          body: expect.any(String),
+          votes: expect.any(Number),
+          author: expect.any(String),
+          article_id: expect.any(Number),
+          created_at: expect.any(String),
+        };
+
         expect(comments.length).toBe(2);
+        comments.forEach((comment) => {
+          expect(comment).toMatchObject(expectedComment);
+          expect(comment.article_id).toBe(3);
+        });
       });
   });
   it("200: responds with most recent comments first", () => {
