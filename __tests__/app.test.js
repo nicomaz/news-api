@@ -117,7 +117,6 @@ describe("GET /api/articles/:article_id/comments", () => {
           body: expect.any(String),
           votes: expect.any(Number),
           author: expect.any(String),
-          article_id: expect.any(Number),
           created_at: expect.any(String),
         };
 
@@ -150,6 +149,14 @@ describe("GET /api/articles/:article_id/comments", () => {
       .expect(404)
       .then(({ body: { msg } }) => {
         expect(msg).toBe("Article not found");
+      });
+  });
+  it("200: responds with an empty array if article id exists but has no comments", () => {
+    return request(app)
+      .get("/api/articles/2/comments")
+      .expect(200)
+      .then(({ body: { comments } }) => {
+        expect(comments).toEqual([]);
       });
   });
   it("endpoint.json contains /api/articles/:article_id/comments", () => {
