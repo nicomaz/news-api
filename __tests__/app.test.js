@@ -117,13 +117,13 @@ describe("GET /api/articles/:article_id/comments", () => {
           body: expect.any(String),
           votes: expect.any(Number),
           author: expect.any(String),
+          article_id: 3,
           created_at: expect.any(String),
         };
 
         expect(comments.length).toBe(2);
         comments.forEach((comment) => {
           expect(comment).toMatchObject(expectedComment);
-          expect(comment.article_id).toBe(3);
         });
       });
   });
