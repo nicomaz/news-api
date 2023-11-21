@@ -228,12 +228,20 @@ describe("DELETE /api/comments/:comment_id", () => {
   it("204: deletes specific comment and sends no body back", () => {
     return request(app).delete("/api/comments/1").expect(204);
   });
-  it("404: responds with error message when given a non-existent but valid id", () => {
+  it("404: responds with error message when given a non-existent but valid comment id", () => {
     return request(app)
       .delete("/api/comments/20")
       .expect(404)
       .then(({ body: { msg } }) => {
         expect(msg).toBe("Comment does not exist");
+      });
+  });
+  it("400: responds with error message when given an invalid comment id", () => {
+    return request(app)
+      .delete("/api/comments/comment2")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
       });
   });
 });
