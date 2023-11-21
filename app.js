@@ -5,16 +5,22 @@ const {
   handlePsqlErrors,
   handleCustomErrors,
 } = require("./errors");
-const { getArticleById, getArticles } = require("./controllers/articles.controllers");
+const {
+  getArticleById,
+  getArticles,
+} = require("./controllers/articles.controllers");
 const { handle404, getEndpoints } = require("./controllers/api.controllers");
+const { postComment } = require("./controllers/comments.controllers");
 
 const app = express();
 
+app.use(express.json());
 
 app.get("/api", getEndpoints);
 app.get("/api/topics", getTopics);
+app.post("/api/articles/:article_id/comments", postComment);
 app.get("/api/articles/:article_id", getArticleById);
-app.get("/api/articles", getArticles)
+app.get("/api/articles", getArticles);
 
 app.all("*", handle404);
 
