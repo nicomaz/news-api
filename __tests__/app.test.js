@@ -53,7 +53,10 @@ describe("GET /api", () => {
         for (let endpoint in endpoints) {
           const endPointBody = endpoints[endpoint];
           expect(endPointBody).toMatchObject(expectedEndpoint);
-          expect(isObject(endPointBody.exampleResponse)).toBe(true);
+
+          if (endPointBody.exampleResponse) {
+            expect(isObject(endPointBody.exampleResponse)).toBe(true);
+          }
 
           if (endPointBody.exampleRequest) {
             expect(isObject(endPointBody.exampleRequest)).toBe(true);
@@ -242,6 +245,13 @@ describe("DELETE /api/comments/:comment_id", () => {
       .expect(400)
       .then(({ body: { msg } }) => {
         expect(msg).toBe("Bad request");
+      });
+  });
+  it("endpoint.json contains DELETE /api/comments/:comment_id", () => {
+    return request(app)
+      .get("/api")
+      .then(({ body: { endpoints } }) => {
+        expect(endpoints).toHaveProperty("DELETE /api/comments/:comment_id");
       });
   });
 });
