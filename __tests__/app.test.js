@@ -30,6 +30,13 @@ describe("GET /api/topics", () => {
         });
       });
   });
+  it("endpoint.json contains api/topics/", () => {
+    return request(app)
+      .get("/api")
+      .then(({ body: { endpoints } }) => {
+        expect(endpoints).toHaveProperty("GET /api/topics");
+      });
+  });
 });
 
 describe("GET /api", () => {
@@ -106,7 +113,6 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get("/api/articles/3/comments")
       .expect(200)
       .then(({ body: { comments } }) => {
-        console.log(comments);
         expect(comments.length).toBe(2);
       });
   });
@@ -138,7 +144,63 @@ describe("GET /api/articles/:article_id/comments", () => {
     return request(app)
       .get("/api")
       .then(({ body: { endpoints } }) => {
-        expect(endpoints).toHaveProperty("GET /api/articles/:article_id/comments");
+        expect(endpoints).toHaveProperty(
+          "GET /api/articles/:article_id/comments"
+        );
+      });
+  });
+});
+
+describe("GET /api/articles", () => {
+  it("200: responds with an array of all articles", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        const expectedArticle = {
+          author: expect.any(String),
+          title: expect.any(String),
+          article_id: expect.any(Number),
+          topic: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          article_img_url: expect.any(String),
+          comment_count: expect.any(String),
+        };
+
+        expect(articles.length).toBe(13);
+        articles.forEach((article) => {
+          expect(article).toMatchObject(expectedArticle);
+          expect(article.body).toBe(undefined);
+        });
+      });
+  });
+  it("200: responds with correct comment_count", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        const article1 = articles.filter((article) => {
+          if (article.article_id === 1) {
+            return article;
+          }
+        });
+        expect(+article1[0].comment_count).toBe(11);
+      });
+  });
+  it("200: articles should be sorted in descending order", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+  it("endpoint.json contains api/articles/", () => {
+    return request(app)
+      .get("/api")
+      .then(({ body: { endpoints } }) => {
+        expect(endpoints).toHaveProperty("GET /api/articles");
       });
   });
 });
