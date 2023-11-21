@@ -10,7 +10,9 @@ const {
   getArticles,
 } = require("./controllers/articles.controllers");
 const { handle404, getEndpoints } = require("./controllers/api.controllers");
-const { getCommentsByArticleId } = require("./controllers/comments.controllers");
+const {
+  getCommentsByArticleId, deleteComment,
+} = require("./controllers/comments.controllers");
 
 const app = express();
 
@@ -19,6 +21,7 @@ app.get("/api/topics", getTopics);
 app.get("/api/articles/:article_id", getArticleById);
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 app.get("/api/articles", getArticles);
+app.delete("/api/comments/:comment_id", deleteComment);
 
 app.all("*", handle404);
 
