@@ -105,6 +105,67 @@ describe("GET /api/articles/:articles_id", () => {
         expect(msg).toBe("Not found");
       });
   });
+  it("endpoint.json contains /api/articles/:article_id", () => {
+    return request(app)
+      .get("/api")
+      .then(({ body: { endpoints } }) => {
+        expect(endpoints).toHaveProperty("GET /api/articles/:article_id");
+      });
+  });
+});
+
+describe("GET /api/articles", () => {
+  it("200: responds with an array of all articles", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        const expectedArticle = {
+          author: expect.any(String),
+          title: expect.any(String),
+          article_id: expect.any(Number),
+          topic: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          article_img_url: expect.any(String),
+          comment_count: expect.any(String),
+        };
+
+        expect(articles.length).toBe(13);
+        articles.forEach((article) => {
+          expect(article).toMatchObject(expectedArticle);
+          expect(article.body).toBe(undefined);
+        });
+      });
+  });
+  it("200: responds with correct comment_count", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        const article1 = articles.filter((article) => {
+          if (article.article_id === 1) {
+            return article;
+          }
+        });
+        expect(+article1[0].comment_count).toBe(11);
+      });
+  });
+  it("200: articles should be sorted in descending order", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+  it("endpoint.json contains api/articles/", () => {
+    return request(app)
+      .get("/api")
+      .then(({ body: { endpoints } }) => {
+        expect(endpoints).toHaveProperty("GET /api/articles");
+      });
+  });
 });
 
 describe("GET /api/articles/:article_id/comments", () => {
@@ -166,60 +227,6 @@ describe("GET /api/articles/:article_id/comments", () => {
         expect(endpoints).toHaveProperty(
           "GET /api/articles/:article_id/comments"
         );
-      });
-  });
-});
-
-describe("GET /api/articles", () => {
-  it("200: responds with an array of all articles", () => {
-    return request(app)
-      .get("/api/articles")
-      .expect(200)
-      .then(({ body: { articles } }) => {
-        const expectedArticle = {
-          author: expect.any(String),
-          title: expect.any(String),
-          article_id: expect.any(Number),
-          topic: expect.any(String),
-          created_at: expect.any(String),
-          votes: expect.any(Number),
-          article_img_url: expect.any(String),
-          comment_count: expect.any(String),
-        };
-
-        expect(articles.length).toBe(13);
-        articles.forEach((article) => {
-          expect(article).toMatchObject(expectedArticle);
-          expect(article.body).toBe(undefined);
-        });
-      });
-  });
-  it("200: responds with correct comment_count", () => {
-    return request(app)
-      .get("/api/articles")
-      .expect(200)
-      .then(({ body: { articles } }) => {
-        const article1 = articles.filter((article) => {
-          if (article.article_id === 1) {
-            return article;
-          }
-        });
-        expect(+article1[0].comment_count).toBe(11);
-      });
-  });
-  it("200: articles should be sorted in descending order", () => {
-    return request(app)
-      .get("/api/articles")
-      .expect(200)
-      .then(({ body: { articles } }) => {
-        expect(articles).toBeSortedBy("created_at", { descending: true });
-      });
-  });
-  it("endpoint.json contains api/articles/", () => {
-    return request(app)
-      .get("/api")
-      .then(({ body: { endpoints } }) => {
-        expect(endpoints).toHaveProperty("GET /api/articles");
       });
   });
 });
@@ -304,6 +311,90 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(endpoints).toHaveProperty(
           "POST /api/articles/:article_id/comments"
         );
+      });
+  });
+});
+
+describe("PATCH /api/articles/:article_id", () => {
+  it("200: should respond with article object with updated votes when adding votes", () => {
+    const newVotes = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(newVotes)
+      .expect(200)
+      .then(({ body: { article } }) => {
+        const expectedArticle = {
+          article_id: 1,
+          title: "Living in the shadow of a great man",
+          topic: "mitch",
+          author: "butter_bridge",
+          body: "I find this existence challenging",
+          created_at: "2020-07-09T20:11:00.000Z",
+          votes: 101,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        };
+
+        expect(article).toEqual(expectedArticle);
+      });
+  });
+  it("200: should respond with article object with updated votes when removing votes", () => {
+    const newVotes = { inc_votes: -1 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(newVotes)
+      .expect(200)
+      .then(({ body: { article } }) => {
+        const expectedArticle = {
+          article_id: 1,
+          title: "Living in the shadow of a great man",
+          topic: "mitch",
+          author: "butter_bridge",
+          body: "I find this existence challenging",
+          created_at: "2020-07-09T20:11:00.000Z",
+          votes: 99,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        };
+
+        expect(article).toEqual(expectedArticle);
+      });
+  });
+  it("400: responds with an error message if request body is invalid", () => {
+    const newVotes = { inc_votes: "update this please" };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(newVotes)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
+  it("400: responds with an error message if id is not a valid type", () => {
+    const newVotes = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/articles/article3")
+      .send(newVotes)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
+  it("404: responds with an error message if id is a valid type but does not exist", () => {
+    const newVotes = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/articles/15")
+      .send(newVotes)
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Not found");
+      });
+  });
+  it("endpoint.json PATCH /api/articles/:article_id", () => {
+    return request(app)
+      .get("/api")
+      .then(({ body: { endpoints } }) => {
+        expect(endpoints).toHaveProperty("PATCH /api/articles/:article_id");
       });
   });
 });
