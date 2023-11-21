@@ -8,8 +8,14 @@ exports.postComment = (req, res, next) => {
   const newComment = req.body;
   const { article_id } = req.params;
 
-  insertComment(newComment, article_id)
-    .then((comment) => {
+  const articlePromises = [
+    checkExists("articles", "article_id", article_id),
+    insertComment(newComment, article_id),
+  ];
+
+  Promise.all(articlePromises)
+    .then((resolvedPromises) => {
+      const comment = resolvedPromises[1];
       res.status(201).send({ comment });
     })
     .catch(next);

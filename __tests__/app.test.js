@@ -271,7 +271,7 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(msg).toBe("Bad request");
       });
   });
-  it("400: responds with an error message if id is a valid type but does not exist", () => {
+  it("404: responds with an error message if id is a valid type but does not exist", () => {
     const postComment = {
       username: "icellusedkars",
       body: "This is a comment",
@@ -279,9 +279,9 @@ describe("POST /api/articles/:article_id/comments", () => {
     return request(app)
       .post("/api/articles/15/comments")
       .send({ postComment })
-      .expect(400)
+      .expect(404)
       .then(({ body: { msg } }) => {
-        expect(msg).toBe("Bad request");
+        expect(msg).toBe("Not found");
       });
   });
   it("400: responds with an error message if id is not a valid type", () => {
@@ -290,7 +290,7 @@ describe("POST /api/articles/:article_id/comments", () => {
       body: "This is a comment",
     };
     return request(app)
-      .post("/api/articles/15/comments")
+      .post("/api/articles/notValid/comments")
       .send({ postComment })
       .expect(400)
       .then(({ body: { msg } }) => {
