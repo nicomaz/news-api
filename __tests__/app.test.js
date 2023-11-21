@@ -70,7 +70,7 @@ describe("GET /api", () => {
   });
 });
 
-describe("GET /api/articles/articles:id", () => {
+describe("GET /api/articles/:articles_id", () => {
   it("200: responds with individual article", () => {
     return request(app)
       .get("/api/articles/2")
@@ -103,6 +103,69 @@ describe("GET /api/articles/articles:id", () => {
       .expect(404)
       .then(({ body: { msg } }) => {
         expect(msg).toBe("Not found");
+      });
+  });
+});
+
+describe("GET /api/articles/:article_id/comments", () => {
+  it("200: responds with an array of comments of given article_id", () => {
+    return request(app)
+      .get("/api/articles/3/comments")
+      .expect(200)
+      .then(({ body: { comments } }) => {
+        const expectedComment = {
+          body: expect.any(String),
+          votes: expect.any(Number),
+          author: expect.any(String),
+          article_id: 3,
+          created_at: expect.any(String),
+        };
+
+        expect(comments.length).toBe(2);
+        comments.forEach((comment) => {
+          expect(comment).toMatchObject(expectedComment);
+        });
+      });
+  });
+  it("200: responds with most recent comments first", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body: { comments } }) => {
+        expect(comments).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+  it("400: responds with an error message if id is not a valid type", () => {
+    return request(app)
+      .get("/api/articles/article3/comments")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
+  it("404: responds with an error message if id is a valid type but does not exist", () => {
+    return request(app)
+      .get("/api/articles/15/comments")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Not found");
+      });
+  });
+  it("200: responds with an empty array if article id exists but has no comments", () => {
+    return request(app)
+      .get("/api/articles/2/comments")
+      .expect(200)
+      .then(({ body: { comments } }) => {
+        expect(comments).toEqual([]);
+      });
+  });
+  it("endpoint.json contains /api/articles/:article_id/comments", () => {
+    return request(app)
+      .get("/api")
+      .then(({ body: { endpoints } }) => {
+        expect(endpoints).toHaveProperty(
+          "GET /api/articles/:article_id/comments"
+        );
       });
   });
 });
