@@ -1,8 +1,27 @@
+
 const { checkExists } = require("../db/seeds/utils");
 const {
+  insertComment,
   selectCommentsByArticleId,
   removeComment,
 } = require("../models/comments.models");
+
+exports.postComment = (req, res, next) => {
+  const newComment = req.body;
+  const { article_id } = req.params;
+
+  const articlePromises = [
+    checkExists("articles", "article_id", article_id),
+    insertComment(newComment, article_id),
+  ];
+
+  Promise.all(articlePromises)
+    .then((resolvedPromises) => {
+      const comment = resolvedPromises[1];
+      res.status(201).send({ comment });
+    })
+    .catch(next);
+};
 
 exports.getCommentsByArticleId = (req, res, next) => {
   const { article_id } = req.params;

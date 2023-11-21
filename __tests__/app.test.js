@@ -105,70 +105,14 @@ describe("GET /api/articles/:articles_id", () => {
       .get("/api/articles/15")
       .expect(404)
       .then(({ body: { msg } }) => {
-        expect(msg).toBe("Article not found");
+        expect(msg).toBe("Not found");
       });
   });
-});
-
-describe("GET /api/articles/:article_id/comments", () => {
-  it("200: responds with an array of comments of given article_id", () => {
-    return request(app)
-      .get("/api/articles/3/comments")
-      .expect(200)
-      .then(({ body: { comments } }) => {
-        const expectedComment = {
-          body: expect.any(String),
-          votes: expect.any(Number),
-          author: expect.any(String),
-          article_id: 3,
-          created_at: expect.any(String),
-        };
-
-        expect(comments.length).toBe(2);
-        comments.forEach((comment) => {
-          expect(comment).toMatchObject(expectedComment);
-        });
-      });
-  });
-  it("200: responds with most recent comments first", () => {
-    return request(app)
-      .get("/api/articles/1/comments")
-      .expect(200)
-      .then(({ body: { comments } }) => {
-        expect(comments).toBeSortedBy("created_at", { descending: true });
-      });
-  });
-  it("400: responds with an error message if id is not a valid type", () => {
-    return request(app)
-      .get("/api/articles/article3/comments")
-      .expect(400)
-      .then(({ body: { msg } }) => {
-        expect(msg).toBe("Bad request");
-      });
-  });
-  it("404: responds with an error message if id is a valid type but does not exist", () => {
-    return request(app)
-      .get("/api/articles/15/comments")
-      .expect(404)
-      .then(({ body: { msg } }) => {
-        expect(msg).toBe("Article not found");
-      });
-  });
-  it("200: responds with an empty array if article id exists but has no comments", () => {
-    return request(app)
-      .get("/api/articles/2/comments")
-      .expect(200)
-      .then(({ body: { comments } }) => {
-        expect(comments).toEqual([]);
-      });
-  });
-  it("endpoint.json contains /api/articles/:article_id/comments", () => {
+  it("endpoint.json contains /api/articles/:article_id", () => {
     return request(app)
       .get("/api")
       .then(({ body: { endpoints } }) => {
-        expect(endpoints).toHaveProperty(
-          "GET /api/articles/:article_id/comments"
-        );
+        expect(endpoints).toHaveProperty("GET /api/articles/:article_id");
       });
   });
 });
@@ -223,6 +167,237 @@ describe("GET /api/articles", () => {
       .get("/api")
       .then(({ body: { endpoints } }) => {
         expect(endpoints).toHaveProperty("GET /api/articles");
+      });
+  });
+});
+
+describe("GET /api/articles/:article_id/comments", () => {
+  it("200: responds with an array of comments of given article_id", () => {
+    return request(app)
+      .get("/api/articles/3/comments")
+      .expect(200)
+      .then(({ body: { comments } }) => {
+        const expectedComment = {
+          body: expect.any(String),
+          votes: expect.any(Number),
+          author: expect.any(String),
+          article_id: 3,
+          created_at: expect.any(String),
+        };
+
+        expect(comments.length).toBe(2);
+        comments.forEach((comment) => {
+          expect(comment).toMatchObject(expectedComment);
+        });
+      });
+  });
+  it("200: responds with most recent comments first", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body: { comments } }) => {
+        expect(comments).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+  it("400: responds with an error message if id is not a valid type", () => {
+    return request(app)
+      .get("/api/articles/article3/comments")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
+  it("404: responds with an error message if id is a valid type but does not exist", () => {
+    return request(app)
+      .get("/api/articles/15/comments")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Not found");
+      });
+  });
+  it("200: responds with an empty array if article id exists but has no comments", () => {
+    return request(app)
+      .get("/api/articles/2/comments")
+      .expect(200)
+      .then(({ body: { comments } }) => {
+        expect(comments).toEqual([]);
+      });
+  });
+  it("endpoint.json contains /api/articles/:article_id/comments", () => {
+    return request(app)
+      .get("/api")
+      .then(({ body: { endpoints } }) => {
+        expect(endpoints).toHaveProperty(
+          "GET /api/articles/:article_id/comments"
+        );
+      });
+  });
+});
+
+describe("POST /api/articles/:article_id/comments", () => {
+  it("201: responds with the inserted comment", () => {
+    const postComment = {
+      username: "icellusedkars",
+      body: "This is a comment",
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send({ postComment })
+      .expect(201)
+      .then(({ body: { comment } }) => {
+        const expectedComment = {
+          body: "This is a comment",
+          author: "icellusedkars",
+          article_id: 1,
+          votes: 0,
+          created_at: expect.any(String),
+        };
+
+        expect(comment).toMatchObject(expectedComment);
+      });
+  });
+  it("400: responds with error when request has an invalid username", () => {
+    const postComment = {
+      username: "notExistentUsername",
+      body: "This is a comment",
+    };
+    return request(app)
+      .post("/api/articles/4/comments")
+      .send({ postComment })
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
+  it("400: responds with error when request is missing required information", () => {
+    const postComment = {
+      username: "icellusedkars",
+    };
+    return request(app)
+      .post("/api/articles/4/comments")
+      .send({ postComment })
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
+  it("404: responds with an error message if id is a valid type but does not exist", () => {
+    const postComment = {
+      username: "icellusedkars",
+      body: "This is a comment",
+    };
+    return request(app)
+      .post("/api/articles/15/comments")
+      .send({ postComment })
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Not found");
+      });
+  });
+  it("400: responds with an error message if id is not a valid type", () => {
+    const postComment = {
+      username: "icellusedkars",
+      body: "This is a comment",
+    };
+    return request(app)
+      .post("/api/articles/notValid/comments")
+      .send({ postComment })
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
+  it("endpoint.json contains POST /api/articles/:article_id/comments", () => {
+    return request(app)
+      .get("/api")
+      .then(({ body: { endpoints } }) => {
+        expect(endpoints).toHaveProperty(
+          "POST /api/articles/:article_id/comments"
+        );
+      });
+  });
+});
+
+describe("PATCH /api/articles/:article_id", () => {
+  it("200: should respond with article object with updated votes when adding votes", () => {
+    const newVotes = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(newVotes)
+      .expect(200)
+      .then(({ body: { article } }) => {
+        const expectedArticle = {
+          article_id: 1,
+          title: "Living in the shadow of a great man",
+          topic: "mitch",
+          author: "butter_bridge",
+          body: "I find this existence challenging",
+          created_at: "2020-07-09T20:11:00.000Z",
+          votes: 101,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        };
+
+        expect(article).toEqual(expectedArticle);
+      });
+  });
+  it("200: should respond with article object with updated votes when removing votes", () => {
+    const newVotes = { inc_votes: -1 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(newVotes)
+      .expect(200)
+      .then(({ body: { article } }) => {
+        const expectedArticle = {
+          article_id: 1,
+          title: "Living in the shadow of a great man",
+          topic: "mitch",
+          author: "butter_bridge",
+          body: "I find this existence challenging",
+          created_at: "2020-07-09T20:11:00.000Z",
+          votes: 99,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        };
+
+        expect(article).toEqual(expectedArticle);
+      });
+  });
+  it("400: responds with an error message if request body is invalid", () => {
+    const newVotes = { inc_votes: "update this please" };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(newVotes)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
+  it("400: responds with an error message if id is not a valid type", () => {
+    const newVotes = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/articles/article3")
+      .send(newVotes)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
+  it("404: responds with an error message if id is a valid type but does not exist", () => {
+    const newVotes = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/articles/15")
+      .send(newVotes)
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Not found");
+      });
+  });
+  it("endpoint.json PATCH /api/articles/:article_id", () => {
+    return request(app)
+      .get("/api")
+      .then(({ body: { endpoints } }) => {
+        expect(endpoints).toHaveProperty("PATCH /api/articles/:article_id");
       });
   });
 });
