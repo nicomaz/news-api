@@ -47,3 +47,15 @@ exports.selectCommentsByArticleId = (articleId) => {
       return rows;
     });
 };
+
+exports.changeArticleVotes = (articleId, votes) => {
+  console.log(votes)
+  return db.query(`UPDATE articles
+  SET votes = votes + $2
+  WHERE article_id = $1
+  RETURNING *`, [articleId, votes])
+  .then(({rows}) => {
+    console.log(rows)
+    return rows[0]
+  })
+};

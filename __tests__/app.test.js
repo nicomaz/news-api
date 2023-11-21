@@ -224,6 +224,53 @@ describe("GET /api/articles", () => {
   });
 });
 
+describe("PATCH /api/articles/:article_id", () => {
+  it("200: should respond with article object with updated votes when adding votes", () => {
+    const newVotes = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(newVotes)
+      .expect(200)
+      .then(({ body: { article } }) => {
+        const expectedArticle = {
+          article_id: 1,
+          title: "Living in the shadow of a great man",
+          topic: "mitch",
+          author: "butter_bridge",
+          body: "I find this existence challenging",
+          created_at: "2020-07-09T20:11:00.000Z",
+          votes: 101,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        };
+
+        expect(article).toEqual(expectedArticle);
+      });
+  });
+  it("200: should respond with article object with updated votes when removing votes", () => {
+    const newVotes = { inc_votes: -1 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(newVotes)
+      .expect(200)
+      .then(({ body: { article } }) => {
+        const expectedArticle = {
+          article_id: 1,
+          title: "Living in the shadow of a great man",
+          topic: "mitch",
+          author: "butter_bridge",
+          body: "I find this existence challenging",
+          created_at: "2020-07-09T20:11:00.000Z",
+          votes: 99,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        };
+
+        expect(article).toEqual(expectedArticle);
+      });
+  });
+});
+
 describe("ANY /notAPath", () => {
   test("404: responds with an error message if path is not found", () => {
     return request(app)

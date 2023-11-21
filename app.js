@@ -8,17 +8,23 @@ const {
 const {
   getArticleById,
   getArticles,
+  updateArticleVotesById,
 } = require("./controllers/articles.controllers");
 const { handle404, getEndpoints } = require("./controllers/api.controllers");
-const { getCommentsByArticleId } = require("./controllers/comments.controllers");
+const {
+  getCommentsByArticleId,
+} = require("./controllers/comments.controllers");
 
 const app = express();
+app.use(express.json());
 
 app.get("/api", getEndpoints);
 app.get("/api/topics", getTopics);
 app.get("/api/articles/:article_id", getArticleById);
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 app.get("/api/articles", getArticles);
+
+app.patch("/api/articles/:article_id", updateArticleVotesById);
 
 app.all("*", handle404);
 
