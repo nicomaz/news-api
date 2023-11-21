@@ -7,10 +7,10 @@ const {
 } = require("./errors");
 const {
   getArticleById,
-  getCommentsByArticleId,
   getArticles,
 } = require("./controllers/articles.controllers");
 const { handle404, getEndpoints } = require("./controllers/api.controllers");
+const { getCommentsByArticleId } = require("./controllers/comments.controllers");
 
 const app = express();
 
