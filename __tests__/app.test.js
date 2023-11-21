@@ -65,7 +65,7 @@ describe("GET /api", () => {
     return request(app)
       .get("/api")
       .then(({ body: { endpoints } }) => {
-        expect(endpoints["GET /api/articles/:article_id"]);
+        expect(endpoints).toHaveProperty("GET /api/articles/:article_id");
       });
   });
 });
