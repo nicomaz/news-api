@@ -49,13 +49,18 @@ exports.selectCommentsByArticleId = (articleId) => {
 };
 
 exports.changeArticleVotes = (articleId, votes) => {
-  console.log(votes)
-  return db.query(`UPDATE articles
+  return db
+    .query(
+      `UPDATE articles
   SET votes = votes + $2
   WHERE article_id = $1
-  RETURNING *`, [articleId, votes])
-  .then(({rows}) => {
-    console.log(rows)
-    return rows[0]
-  })
+  RETURNING *`,
+      [articleId, votes]
+    )
+    .then(({ rows }) => {
+      if (!rows.length) {
+        return Promise.reject({ status: 404, msg: "Not found" });
+      }
+      return rows[0];
+    });
 };

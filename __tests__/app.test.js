@@ -269,6 +269,36 @@ describe("PATCH /api/articles/:article_id", () => {
         expect(article).toEqual(expectedArticle);
       });
   });
+  it("400: responds with an error message if request body is invalid", () => {
+    const newVotes = { inc_votes: "update this please" };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(newVotes)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
+  it("400: responds with an error message if id is not a valid type", () => {
+    const newVotes = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/articles/article3")
+      .send(newVotes)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
+  it("404: responds with an error message if id is a valid type but does not exist", () => {
+    const newVotes = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/articles/15")
+      .send(newVotes)
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Not found");
+      });
+  });
 });
 
 describe("ANY /notAPath", () => {

@@ -32,7 +32,9 @@ exports.getCommentsByArticleId = (req, res, next) => {
 exports.updateArticleVotesById = (req, res, next) => {
   const { article_id } = req.params;
   const { inc_votes } = req.body;
-  changeArticleVotes(article_id, inc_votes).then((article) => {
-    res.status(200).send({ article });
-  });
+  changeArticleVotes(article_id, inc_votes)
+    .then((article) => {
+      res.status(200).send({ article });
+    })
+    .catch(next);
 };
