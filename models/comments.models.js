@@ -4,7 +4,7 @@ exports.insertComment = (comment, articleId) => {
   const {
     postComment: { username, body },
   } = comment;
-  const commentArray = [body, username, +articleId];
+  const commentArray = [body, username, articleId];
   return db
     .query(
       `INSERT INTO comments

@@ -102,7 +102,7 @@ describe("GET /api/articles/articles:id", () => {
       .get("/api/articles/15")
       .expect(404)
       .then(({ body: { msg } }) => {
-        expect(msg).toBe("Article not found");
+        expect(msg).toBe("Not found");
       });
   });
 });
@@ -165,22 +165,82 @@ describe("POST /api/articles/:article_id/comments", () => {
   it("201: responds with the inserted comment", () => {
     const postComment = {
       username: "icellusedkars",
-      body: "You should tell Judgement Kazzy about this.",
+      body: "This is a comment",
     };
     return request(app)
-      .post("/api/articles/4/comments")
+      .post("/api/articles/1/comments")
       .send({ postComment })
       .expect(201)
       .then(({ body: { comment } }) => {
         const expectedComment = {
-          body: "You should tell Judgement Kazzy about this.",
+          body: "This is a comment",
           author: "icellusedkars",
-          article_id: 4,
+          article_id: 1,
           votes: 0,
           created_at: expect.any(String),
         };
 
         expect(comment).toMatchObject(expectedComment);
+      });
+  });
+  it("400: responds with error when request has an invalid username", () => {
+    const postComment = {
+      username: "notExistentUsername",
+      body: "This is a comment",
+    };
+    return request(app)
+      .post("/api/articles/4/comments")
+      .send({ postComment })
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
+  it("400: responds with error when request is missing required information", () => {
+    const postComment = {
+      username: "icellusedkars",
+    };
+    return request(app)
+      .post("/api/articles/4/comments")
+      .send({ postComment })
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
+  it("400: responds with an error message if id is a valid type but does not exist", () => {
+    const postComment = {
+      username: "icellusedkars",
+      body: "This is a comment",
+    };
+    return request(app)
+      .post("/api/articles/15/comments")
+      .send({ postComment })
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
+  it("400: responds with an error message if id is not a valid type", () => {
+    const postComment = {
+      username: "icellusedkars",
+      body: "This is a comment",
+    };
+    return request(app)
+      .post("/api/articles/15/comments")
+      .send({ postComment })
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
+  it("endpoint.json contains POST /api/articles/:article_id/comments", () => {
+    return request(app)
+      .get("/api")
+      .then(({ body: { endpoints } }) => {
+        expect(endpoints).toHaveProperty(
+          "POST /api/articles/:article_id/comments"
+        );
       });
   });
 });
