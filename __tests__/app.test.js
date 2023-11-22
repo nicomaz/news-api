@@ -458,6 +458,31 @@ describe("GET /api/users", () => {
   });
 });
 
+describe("GET api/articles?topic=", () => {
+  it("200: responds with an array of articles specified in a topic query", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        const expectedArticle = {
+          author: expect.any(String),
+          title: expect.any(String),
+          article_id: expect.any(Number),
+          topic: "mitch",
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          article_img_url: expect.any(String),
+          comment_count: expect.any(String),
+        };
+
+        expect(articles.length).toBe(12);
+        articles.forEach((article) => {
+          expect(article).toMatchObject(expectedArticle);
+        });
+      });
+  });
+});
+
 describe("ANY /notAPath", () => {
   test("404: responds with an error message if path is not found", () => {
     return request(app)
