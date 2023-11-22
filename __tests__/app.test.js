@@ -523,8 +523,8 @@ describe("GET /api/articles?topic=", () => {
     return request(app)
       .get("/api")
       .then(({ body: { endpoints } }) => {
-        const topicQuery = endpoints["GET /api/articles"].queries[0];
-        expect(topicQuery).toBe("topic");
+        const topicQueries = endpoints["GET /api/articles"].queries
+        expect(topicQueries.includes("topic")).toBe(true)
       });
   });
 });
