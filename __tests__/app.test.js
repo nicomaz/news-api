@@ -483,26 +483,26 @@ describe("GET /api/articles?topic=", () => {
   });
   it("200: responds with an array of all articles when topic is not specified", () => {
     return request(app)
-    .get("/api/articles?topic=")
-    .expect(200)
-    .then(({ body: { articles } }) => {
-      const expectedArticle = {
-        author: expect.any(String),
-        title: expect.any(String),
-        article_id: expect.any(Number),
-        topic: expect.any(String),
-        created_at: expect.any(String),
-        votes: expect.any(Number),
-        article_img_url: expect.any(String),
-        comment_count: expect.any(String),
-      };
+      .get("/api/articles?topic=")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        const expectedArticle = {
+          author: expect.any(String),
+          title: expect.any(String),
+          article_id: expect.any(Number),
+          topic: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          article_img_url: expect.any(String),
+          comment_count: expect.any(String),
+        };
 
-      expect(articles.length).toBe(13);
-      articles.forEach((article) => {
-        expect(article).toMatchObject(expectedArticle);
+        expect(articles.length).toBe(13);
+        articles.forEach((article) => {
+          expect(article).toMatchObject(expectedArticle);
+        });
       });
-    });
-  })
+  });
   it("404: responds with error message when topic does not exist", () => {
     return request(app)
       .get("/api/articles?topic=app")
@@ -517,6 +517,14 @@ describe("GET /api/articles?topic=", () => {
       .expect(200)
       .then(({ body: { articles } }) => {
         expect(articles).toEqual([]);
+      });
+  });
+  it("endpoint.json contains topic as a query for GET /api/articles", () => {
+    return request(app)
+      .get("/api")
+      .then(({ body: { endpoints } }) => {
+        const topicQuery = endpoints["GET /api/articles"].queries[0];
+        expect(topicQuery).toBe("topic");
       });
   });
 });
