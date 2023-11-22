@@ -319,7 +319,7 @@ describe("POST /api/articles/:article_id/comments", () => {
 });
 
 describe("PATCH /api/articles/:article_id", () => {
-  it("200: should respond with article object with updated votes when adding votes", () => {
+  it("200: responds with article object with updated votes when adding votes", () => {
     const newVotes = { inc_votes: 1 };
     return request(app)
       .patch("/api/articles/1")
@@ -341,7 +341,7 @@ describe("PATCH /api/articles/:article_id", () => {
         expect(article).toEqual(expectedArticle);
       });
   });
-  it("200: should respond with article object with updated votes when removing votes", () => {
+  it("200: responds with article object with updated votes when removing votes", () => {
     const newVotes = { inc_votes: -1 };
     return request(app)
       .patch("/api/articles/1")
@@ -458,8 +458,8 @@ describe("GET /api/users", () => {
   });
 });
 
-describe("GET api/articles?topic=", () => {
-  it("200: responds with an array of articles specified in a topic query", () => {
+describe("GET /api/articles?topic=", () => {
+  it("200: responds with an array of articles specified by a topic", () => {
     return request(app)
       .get("/api/articles?topic=mitch")
       .expect(200)
@@ -479,6 +479,44 @@ describe("GET api/articles?topic=", () => {
         articles.forEach((article) => {
           expect(article).toMatchObject(expectedArticle);
         });
+      });
+  });
+  it("200: responds with an array of all articles when topic is not specified", () => {
+    return request(app)
+    .get("/api/articles?topic=")
+    .expect(200)
+    .then(({ body: { articles } }) => {
+      const expectedArticle = {
+        author: expect.any(String),
+        title: expect.any(String),
+        article_id: expect.any(Number),
+        topic: expect.any(String),
+        created_at: expect.any(String),
+        votes: expect.any(Number),
+        article_img_url: expect.any(String),
+        comment_count: expect.any(String),
+      };
+
+      expect(articles.length).toBe(13);
+      articles.forEach((article) => {
+        expect(article).toMatchObject(expectedArticle);
+      });
+    });
+  })
+  it("404: responds with error message when topic does not exist", () => {
+    return request(app)
+      .get("/api/articles?topic=app")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Not found");
+      });
+  });
+  it("200: responds with an empty array if queried topic exists but has no articles", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toEqual([]);
       });
   });
 });
