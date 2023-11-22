@@ -8,7 +8,6 @@ const {
 
 exports.getArticles = (req, res, next) => {
   const { topic } = req.query;
-
   const topicPromises = [selectAllArticles(topic)];
 
   if (topic) {
