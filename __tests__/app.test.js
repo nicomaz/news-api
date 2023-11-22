@@ -115,6 +115,14 @@ describe("GET /api/articles/:articles_id", () => {
         expect(endpoints).toHaveProperty("GET /api/articles/:article_id");
       });
   });
+  it("200: responds with individual article with a comment count", () => {
+    return request(app)
+      .get("/api/articles/1")
+      .expect(200)
+      .then(({ body: { article } }) => {
+        expect(article.comment_count).toBe("11");
+      });
+  });
 });
 
 describe("GET /api/articles", () => {
