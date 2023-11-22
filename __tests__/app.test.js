@@ -431,6 +431,33 @@ describe("DELETE /api/comments/:comment_id", () => {
   });
 });
 
+describe("GET /api/users", () => {
+  it("200: responds with an array of users", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body: { users } }) => {
+        const expectedUser = {
+          username: expect.any(String),
+          name: expect.any(String),
+          avatar_url: expect.any(String),
+        };
+
+        expect(users.length).toBe(4);
+        users.forEach((user) => {
+          expect(user).toMatchObject(expectedUser);
+        });
+      });
+  });
+  it("endpoint.json contains GET /api/users", () => {
+    return request(app)
+      .get("/api")
+      .then(({ body: { endpoints } }) => {
+        expect(endpoints).toHaveProperty("GET /api/users");
+      });
+  });
+});
+
 describe("ANY /notAPath", () => {
   test("404: responds with an error message if path is not found", () => {
     return request(app)

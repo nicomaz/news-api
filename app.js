@@ -16,6 +16,7 @@ const {
   deleteComment,
   postComment,
 } = require("./controllers/comments.controllers");
+const { getUsers } = require("./controllers/users.controllers");
 
 const app = express();
 app.use(express.json());
@@ -28,6 +29,7 @@ app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 app.post("/api/articles/:article_id/comments", postComment);
 app.get("/api/articles", getArticles);
 app.delete("/api/comments/:comment_id", deleteComment);
+app.get("/api/users", getUsers)
 
 app.all("*", handle404);
 
