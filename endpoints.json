@@ -21,7 +21,7 @@
   },
   "GET /api/articles": {
     "description": "serves an array of all articles",
-    "queries": [],
+    "queries": ["topic"],
     "exampleResponse": {
       "articles": [
         {
@@ -54,7 +54,7 @@
     }
   },
   "GET /api/articles/:article_id/comments": {
-    "description": "serves an array of all comments on an article",
+    "description": "serves up an array of all comments on an article",
     "queries": [],
     "exampleResponse": {
       "comments": [
@@ -97,7 +97,7 @@
     }
   },
   "PATCH /api/articles/:article_id": {
-    "description": "serves article with updated votes based on parametric endpoint",
+    "description": "serves up an article with updated votes based on parametric endpoint",
     "queries": [],
     "exampleResponse": {
       "article_id": 1,
@@ -116,7 +116,7 @@
     "queries": []
   },
   "GET /api/users": {
-    "description": "serves an array of all users",
+    "description": "serves up an array of all users",
     "queries": [],
     "exmapleResponse": {
       "username": "icellusedkars",
