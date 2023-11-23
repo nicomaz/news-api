@@ -272,8 +272,16 @@ describe("GET /api/articles", () => {
           expect(articles).toBeSortedBy("title", { descending: true });
         });
     });
+    it("400: responds with an error message for an invalid sort_by query", () => {
+      return request(app)
+        .get("/api/articles?sort_by=arthor")
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Bad request");
+        });
+    });
   });
-  })
+});
 
 describe("GET /api/articles/:article_id/comments", () => {
   it("200: responds with an array of comments of given article_id", () => {

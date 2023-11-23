@@ -2,6 +2,20 @@ const db = require("../db/connection");
 
 exports.selectAllArticles = (topic, sortBy = "created_at") => {
   const queryValues = [];
+  const validSortBy = [
+    "author",
+    "title",
+    "article_id",
+    "topic",
+    "votes",
+    "created_at",
+    "article_img_url",
+    "comment_count",
+  ];
+
+  if (!validSortBy.includes(sortBy)) {
+    return Promise.reject({ status: 400, msg: "Bad request" });
+  }
 
   let queryString = ` 
       SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT (comments.article_id) AS comment_count
