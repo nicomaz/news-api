@@ -60,8 +60,7 @@ Running the `app.test` file will seed the test database after each test.
 Now you can experiment with the code and tests!
 
 ## Sunshine News API in action 
-Check out the hosted version of [Sunshine API](https://sunshine-news.onrender.com) 
-   - Begin by adding `/api` at the end of the URL to see all the possible endpoints
+Check out the hosted version of [Sunshine API](https://sunshine-news.onrender.com/api) 
   
   
 
