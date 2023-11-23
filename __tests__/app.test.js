@@ -321,8 +321,17 @@ describe("GET /api/articles", () => {
           expect(msg).toBe("Bad request");
         });
     });
+    it("endpoint.json contains order as a query for GET /api/articles", () => {
+      return request(app)
+        .get("/api")
+        .then(({ body: { endpoints } }) => {
+          const topicQueries = endpoints["GET /api/articles"].queries;
+          expect(topicQueries.includes("order")).toBe(true);
+        });
+    });
   });
-});
+  });
+
 
 describe("GET /api/articles/:article_id/comments", () => {
   it("200: responds with an array of comments of given article_id", () => {
