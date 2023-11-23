@@ -1,7 +1,8 @@
 const db = require("../db/connection");
 
-exports.selectAllArticles = (topic) => {
+exports.selectAllArticles = (topic, sortBy = "created_at") => {
   const queryValues = [];
+
   let queryString = ` 
       SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT (comments.article_id) AS comment_count
       FROM articles
@@ -12,11 +13,12 @@ exports.selectAllArticles = (topic) => {
     queryValues.push(topic);
   }
 
-  queryString += ` GROUP BY articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url ORDER BY articles.created_at DESC;`;
-  return db
-     .query(queryString, queryValues)
-     .then(({ rows }) => {
-       return rows;
+  queryString += ` GROUP BY articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url`;
+
+  queryString += ` ORDER BY ${sortBy} DESC`;
+
+  return db.query(queryString, queryValues).then(({ rows }) => {
+    return rows;
   });
 };
 

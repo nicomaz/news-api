@@ -247,7 +247,33 @@ describe("GET /api/articles", () => {
         });
     });
   });
-});
+  describe("GET api/articles?sort_by=", () => {
+    it("200: responds with an array of articles sorted by query", () => {
+      return request(app)
+        .get("/api/articles?sort_by=title")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          const expectedArticle = {
+            author: expect.any(String),
+            title: expect.any(String),
+            article_id: expect.any(Number),
+            topic: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(String),
+          };
+
+          expect(articles.length).toBe(13);
+          articles.forEach((article) => {
+            expect(article).toMatchObject(expectedArticle);
+          });
+
+          expect(articles).toBeSortedBy("title", { descending: true });
+        });
+    });
+  });
+  })
 
 describe("GET /api/articles/:article_id/comments", () => {
   it("200: responds with an array of comments of given article_id", () => {
