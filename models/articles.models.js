@@ -1,7 +1,24 @@
 const db = require("../db/connection");
 
-exports.selectAllArticles = (topic) => {
+exports.selectAllArticles = (topic, sortBy = "created_at", order = "DESC") => {
   const queryValues = [];
+  const validSortBy = [
+    "author",
+    "title",
+    "article_id",
+    "topic",
+    "votes",
+    "created_at",
+    "article_img_url",
+    "comment_count",
+  ];
+
+  const validOrder = ["ASC", "DESC"]
+
+  if (!validSortBy.includes(sortBy) || !validOrder.includes(order)) {
+    return Promise.reject({ status: 400, msg: "Bad request" });
+  }
+
   let queryString = ` 
       SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT (comments.article_id) AS comment_count
       FROM articles
@@ -12,11 +29,12 @@ exports.selectAllArticles = (topic) => {
     queryValues.push(topic);
   }
 
-  queryString += ` GROUP BY articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url ORDER BY articles.created_at DESC;`;
-  return db
-     .query(queryString, queryValues)
-     .then(({ rows }) => {
-       return rows;
+  queryString += ` GROUP BY articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url`;
+
+  queryString += ` ORDER BY ${sortBy} ${order}`;
+
+  return db.query(queryString, queryValues).then(({ rows }) => {
+    return rows;
   });
 };
 

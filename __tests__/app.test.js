@@ -247,7 +247,91 @@ describe("GET /api/articles", () => {
         });
     });
   });
-});
+  describe("GET api/articles?sort_by=", () => {
+    it("200: responds with an array of articles sorted by query", () => {
+      return request(app)
+        .get("/api/articles?sort_by=title")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          const expectedArticle = {
+            author: expect.any(String),
+            title: expect.any(String),
+            article_id: expect.any(Number),
+            topic: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(String),
+          };
+
+          expect(articles.length).toBe(13);
+          articles.forEach((article) => {
+            expect(article).toMatchObject(expectedArticle);
+          });
+
+          expect(articles).toBeSortedBy("title", { descending: true });
+        });
+    });
+    it("400: responds with an error message for an invalid sort_by query", () => {
+      return request(app)
+        .get("/api/articles?sort_by=arthor")
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Bad request");
+        });
+    });
+    it("endpoint.json contains sort_by as a query for GET /api/articles", () => {
+      return request(app)
+        .get("/api")
+        .then(({ body: { endpoints } }) => {
+          const topicQueries = endpoints["GET /api/articles"].queries;
+          expect(topicQueries.includes("sort_by")).toBe(true);
+        });
+    });
+  });
+  describe("GET api/articles?sort_by &order=", () => {
+    it("200: responds with an array of articles ordered by a combination of queries", () => {
+      return request(app)
+        .get("/api/articles?sort_by=author&order=ASC")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          const expectedArticle = {
+            author: expect.any(String),
+            title: expect.any(String),
+            article_id: expect.any(Number),
+            topic: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(String),
+          };
+
+          expect(articles.length).toBe(13);
+          articles.forEach((article) => {
+            expect(article).toMatchObject(expectedArticle);
+          });
+          expect(articles).toBeSortedBy("author", { descending: false });
+        });
+    });
+    it("400: responds with an error message for an invalid order query", () => {
+      return request(app)
+        .get("/api/articles?sort_by=author&order=AAS")
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Bad request");
+        });
+    });
+    it("endpoint.json contains order as a query for GET /api/articles", () => {
+      return request(app)
+        .get("/api")
+        .then(({ body: { endpoints } }) => {
+          const topicQueries = endpoints["GET /api/articles"].queries;
+          expect(topicQueries.includes("order")).toBe(true);
+        });
+    });
+  });
+  });
+
 
 describe("GET /api/articles/:article_id/comments", () => {
   it("200: responds with an array of comments of given article_id", () => {

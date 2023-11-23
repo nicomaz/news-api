@@ -21,7 +21,7 @@
   },
   "GET /api/articles": {
     "description": "serves an array of all articles",
-    "queries": ["topic"],
+    "queries": ["topic", "sort_by", "order"],
     "exampleResponse": {
       "articles": [
         {
@@ -34,6 +34,15 @@
           "comment_count": 6
         }
       ]
+    }
+  },
+  "GET /api/users": {
+    "description": "serves up an array of all users",
+    "queries": [],
+    "exmapleResponse": {
+      "username": "icellusedkars",
+      "name": "sam",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/24604688?s=460&v=4"
     }
   },
   "GET /api/articles/:article_id": {
@@ -114,14 +123,5 @@
   "DELETE /api/comments/:comment_id": {
     "description": "removes comment based on parametric endpoint",
     "queries": []
-  },
-  "GET /api/users": {
-    "description": "serves up an array of all users",
-    "queries": [],
-    "exmapleResponse": {
-      "username": "icellusedkars",
-      "name": "sam",
-      "avatar_url": "https://avatars2.githubusercontent.com/u/24604688?s=460&v=4"
-    }
   }
 }
