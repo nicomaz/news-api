@@ -21,6 +21,9 @@ const { getUsers } = require("./controllers/users.controllers");
 const app = express();
 app.use(express.json());
 
+const apiRouter = require("./routes/api-router");
+app.use("/", apiRouter);
+
 app.get("/api", getEndpoints);
 
 app.get("/api/topics", getTopics);
@@ -33,7 +36,7 @@ app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 app.post("/api/articles/:article_id/comments", postComment);
 app.delete("/api/comments/:comment_id", deleteComment);
 
-app.get("/api/users", getUsers)
+app.get("/api/users", getUsers);
 
 app.all("*", handle404);
 

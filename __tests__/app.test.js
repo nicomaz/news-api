@@ -13,6 +13,17 @@ const { isObject } = require("../db/seeds/utils");
 beforeEach(() => seed({ articleData, commentData, topicData, userData }));
 afterAll(() => db.end());
 
+describe("GET /", () => {
+  it("200: responds with an okay message", () => {
+    return request(app)
+      .get("/")
+      .expect(200)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("API Router all OK");
+      });
+  });
+});
+
 describe("GET /api/topics", () => {
   it("200: responds with an array of all topics", () => {
     return request(app)
@@ -330,8 +341,7 @@ describe("GET /api/articles", () => {
         });
     });
   });
-  });
-
+});
 
 describe("GET /api/articles/:article_id/comments", () => {
   it("200: responds with an array of comments of given article_id", () => {

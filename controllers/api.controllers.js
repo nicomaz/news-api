@@ -9,3 +9,7 @@ exports.getEndpoints = (req, res) => {
 exports.handle404 = (req, res) => {
   res.status(404).send({ msg: "Path not found" });
 };
+
+exports.checkAPIRouter = (req, res) => {
+  res.status(200).send({ msg: "API Router all OK" });
+};
