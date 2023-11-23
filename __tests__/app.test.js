@@ -313,6 +313,14 @@ describe("GET /api/articles", () => {
           expect(articles).toBeSortedBy("author", { descending: false });
         });
     });
+    it("400: responds with an error message for an invalid order query", () => {
+      return request(app)
+        .get("/api/articles?sort_by=author&order=AAS")
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Bad request");
+        });
+    });
   });
 });
 

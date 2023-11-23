@@ -13,7 +13,9 @@ exports.selectAllArticles = (topic, sortBy = "created_at", order = "DESC") => {
     "comment_count",
   ];
 
-  if (!validSortBy.includes(sortBy)) {
+  const validOrder = ["ASC", "DESC"]
+
+  if (!validSortBy.includes(sortBy) || !validOrder.includes(order)) {
     return Promise.reject({ status: 400, msg: "Bad request" });
   }
 
