@@ -162,7 +162,7 @@ describe("GET /api/articles", () => {
         expect(+article1[0].comment_count).toBe(11);
       });
   });
-  it("200: articles should be sorted in descending order", () => {
+  it("200: articles should be sorted in descending order by created_at", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
@@ -176,6 +176,76 @@ describe("GET /api/articles", () => {
       .then(({ body: { endpoints } }) => {
         expect(endpoints).toHaveProperty("GET /api/articles");
       });
+  });
+  describe("GET api/articles?topic=", () => {
+    it("200: responds with an array of articles specified in a topic query", () => {
+      return request(app)
+        .get("/api/articles?topic=mitch")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          const expectedArticle = {
+            author: expect.any(String),
+            title: expect.any(String),
+            article_id: expect.any(Number),
+            topic: "mitch",
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(String),
+          };
+
+          expect(articles.length).toBe(12);
+          articles.forEach((article) => {
+            expect(article).toMatchObject(expectedArticle);
+          });
+        });
+    });
+    it("200: responds with an array of all articles when topic is not specified", () => {
+      return request(app)
+        .get("/api/articles?topic=")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          const expectedArticle = {
+            author: expect.any(String),
+            title: expect.any(String),
+            article_id: expect.any(Number),
+            topic: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(String),
+          };
+
+          expect(articles.length).toBe(13);
+          articles.forEach((article) => {
+            expect(article).toMatchObject(expectedArticle);
+          });
+        });
+    });
+    it("404: responds with error message when topic does not exist", () => {
+      return request(app)
+        .get("/api/articles?topic=app")
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Not found");
+        });
+    });
+    it("200: responds with an empty array if queried topic exists but has no articles", () => {
+      return request(app)
+        .get("/api/articles?topic=paper")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles).toEqual([]);
+        });
+    });
+    it("endpoint.json contains topic as a query for GET /api/articles", () => {
+      return request(app)
+        .get("/api")
+        .then(({ body: { endpoints } }) => {
+          const topicQueries = endpoints["GET /api/articles"].queries;
+          expect(topicQueries.includes("topic")).toBe(true);
+        });
+    });
   });
 });
 
