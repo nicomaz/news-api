@@ -1,6 +1,6 @@
 const db = require("../db/connection");
 
-exports.selectAllArticles = (topic, sortBy = "created_at") => {
+exports.selectAllArticles = (topic, sortBy = "created_at", order = "DESC") => {
   const queryValues = [];
   const validSortBy = [
     "author",
@@ -29,7 +29,7 @@ exports.selectAllArticles = (topic, sortBy = "created_at") => {
 
   queryString += ` GROUP BY articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url`;
 
-  queryString += ` ORDER BY ${sortBy} DESC`;
+  queryString += ` ORDER BY ${sortBy} ${order}`;
 
   return db.query(queryString, queryValues).then(({ rows }) => {
     return rows;
