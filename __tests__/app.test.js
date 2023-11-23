@@ -280,6 +280,14 @@ describe("GET /api/articles", () => {
           expect(msg).toBe("Bad request");
         });
     });
+    it("endpoint.json contains sort_by as a query for GET /api/articles", () => {
+      return request(app)
+        .get("/api")
+        .then(({ body: { endpoints } }) => {
+          const topicQueries = endpoints["GET /api/articles"].queries;
+          expect(topicQueries.includes("sort_by")).toBe(true);
+        });
+    });
   });
 });
 
