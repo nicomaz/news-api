@@ -30,7 +30,6 @@ exports.insertComment = (comment, articleId) => {
     });
 };
 
-
 exports.removeComment = (articleId) => {
   return db
     .query(

@@ -30,7 +30,7 @@ describe("GET /api/topics", () => {
         });
       });
   });
-  it("endpoint.json contains api/topics/", () => {
+  it("endpoint.json contains api/topics", () => {
     return request(app)
       .get("/api")
       .then(({ body: { endpoints } }) => {
@@ -615,6 +615,39 @@ describe("GET /api/users", () => {
       .get("/api")
       .then(({ body: { endpoints } }) => {
         expect(endpoints).toHaveProperty("GET /api/users");
+      });
+  });
+});
+
+describe("GET /api/users/:username", () => {
+  it("200: responds with individual user", () => {
+    return request(app)
+      .get("/api/users/butter_bridge")
+      .expect(200)
+      .then(({ body: { user } }) => {
+        const expectedUser = {
+          username: "butter_bridge",
+          name: "jonny",
+          avatar_url:
+            "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
+        };
+
+        expect(user).toMatchObject(expectedUser);
+      });
+  });
+  it("404: responds with error message if username is of valid type but doesn't exist", () => {
+    return request(app)
+    .get("/api/users/username")
+    .expect(404)
+    .then(( {body : { msg }}) => {
+      expect(msg).toBe("Not found")
+    })
+  })
+  it("endpoint.json contains GET /api/users/:username", () => {
+    return request(app)
+      .get("/api")
+      .then(({ body: { endpoints } }) => {
+        expect(endpoints).toHaveProperty("GET /api/users/:username");
       });
   });
 });
