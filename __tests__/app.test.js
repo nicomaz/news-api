@@ -279,7 +279,6 @@ describe("GET /api/articles", () => {
     });
   });
 });
-
 describe("GET /api/articles/:articles_id", () => {
   it("200: responds with individual article", () => {
     return request(app)
@@ -327,7 +326,7 @@ describe("GET /api/articles/:articles_id", () => {
       .get("/api/articles/1")
       .expect(200)
       .then(({ body: { article } }) => {
-        expect(article.comment_count).toBe("11");
+        expect(article.comment_count).toBe(11);
       });
   });
 });
@@ -412,6 +411,39 @@ describe("PATCH /api/articles/:article_id", () => {
       .get("/api")
       .then(({ body: { endpoints } }) => {
         expect(endpoints).toHaveProperty("PATCH /api/articles/:article_id");
+      });
+  });
+});
+
+describe("POST /api/articles", () => {
+  it("201: responds with added article", () => {
+    const newArticle = {
+      author: "icellusedkars",
+      title: "New article",
+      body: "This is a new article",
+      topic: "cats",
+      article_img_url:
+        "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(201)
+      .then(({ body: { article } }) => {
+        const expectedArticle = {
+          author: "icellusedkars",
+          title: "New article",
+          body: "This is a new article",
+          topic: "cats",
+          article_img_url:
+            "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+          article_id: 14,
+          votes: 0,
+          created_at: expect.any(String),
+          comment_count: 0,
+        };
+
+        expect(article).toMatchObject(expectedArticle);
       });
   });
 });
