@@ -76,7 +76,11 @@ exports.changeArticleVotes = (articleId, votes) => {
 
 exports.createArticle = (article) => {
   const { author, title, body, topic, article_img_url } = article;
-  const articleArray = [author, title, body, topic, article_img_url];
+  const articleArray = [author, title, body, topic];
+
+  if (!article_img_url) {
+    articleArray.push( "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700")
+  } else (articleArray.push(article_img_url))
 
   return db
     .query(
