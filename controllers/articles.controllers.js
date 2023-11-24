@@ -7,8 +7,8 @@ const {
 } = require("../models/articles.models");
 
 exports.getArticles = (req, res, next) => {
-  const { topic, sort_by, order } = req.query;
-  const topicPromises = [selectAllArticles(topic, sort_by, order)];
+  const { topic, sort_by, order, limit, p } = req.query;
+  const topicPromises = [selectAllArticles(topic, sort_by, order, limit, p)];
 
   if (topic) {
     topicPromises.push(checkExists("topics", "slug", topic));
@@ -16,8 +16,8 @@ exports.getArticles = (req, res, next) => {
 
   Promise.all(topicPromises)
     .then((resolvedPromises) => {
-      const articles = resolvedPromises[0];
-      res.status(200).send({ articles });
+      const {rows : articles , totalCount: total_count} = resolvedPromises[0];
+      res.status(200).send({ articles, total_count });
     })
     .catch(next);
 };
