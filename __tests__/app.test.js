@@ -13,32 +13,6 @@ const { isObject } = require("../db/seeds/utils");
 beforeEach(() => seed({ articleData, commentData, topicData, userData }));
 afterAll(() => db.end());
 
-describe("GET /api/topics", () => {
-  it("200: responds with an array of all topics", () => {
-    return request(app)
-      .get("/api/topics")
-      .expect(200)
-      .then(({ body: { topics } }) => {
-        const expectedTopic = {
-          slug: expect.any(String),
-          description: expect.any(String),
-        };
-
-        expect(topics.length).toBe(3);
-        topics.forEach((topic) => {
-          expect(topic).toMatchObject(expectedTopic);
-        });
-      });
-  });
-  it("endpoint.json contains api/topics", () => {
-    return request(app)
-      .get("/api")
-      .then(({ body: { endpoints } }) => {
-        expect(endpoints).toHaveProperty("GET /api/topics");
-      });
-  });
-});
-
 describe("GET /api", () => {
   it("200: responds with an object of available endpoints", () => {
     return request(app)
@@ -73,54 +47,28 @@ describe("GET /api", () => {
   });
 });
 
-describe("GET /api/articles/:articles_id", () => {
-  it("200: responds with individual article", () => {
+describe("GET /api/topics", () => {
+  it("200: responds with an array of all topics", () => {
     return request(app)
-      .get("/api/articles/2")
+      .get("/api/topics")
       .expect(200)
-      .then(({ body: { article } }) => {
-        const expectedArticle = {
-          author: "icellusedkars",
-          title: "Sony Vaio; or, The Laptop",
-          article_id: 2,
-          body: "Call me Mitchell. Some years ago—never mind how long precisely—having little or no money in my purse, and nothing particular to interest me on shore, I thought I would buy a laptop about a little and see the codey part of the world. It is a way I have of driving off the spleen and regulating the circulation. Whenever I find myself growing grim about the mouth; whenever it is a damp, drizzly November in my soul; whenever I find myself involuntarily pausing before coffin warehouses, and bringing up the rear of every funeral I meet; and especially whenever my hypos get such an upper hand of me, that it requires a strong moral principle to prevent me from deliberately stepping into the street, and methodically knocking people’s hats off—then, I account it high time to get to coding as soon as I can. This is my substitute for pistol and ball. With a philosophical flourish Cato throws himself upon his sword; I quietly take to the laptop. There is nothing surprising in this. If they but knew it, almost all men in their degree, some time or other, cherish very nearly the same feelings towards the the Vaio with me.",
-          topic: "mitch",
-          created_at: "2020-10-16T05:03:00.000Z",
-          article_img_url:
-            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+      .then(({ body: { topics } }) => {
+        const expectedTopic = {
+          slug: expect.any(String),
+          description: expect.any(String),
         };
-        expect(article).toMatchObject(expectedArticle);
+
+        expect(topics.length).toBe(3);
+        topics.forEach((topic) => {
+          expect(topic).toMatchObject(expectedTopic);
+        });
       });
   });
-  it("400: responds with an error message if id is not a valid type", () => {
-    return request(app)
-      .get("/api/articles/article3")
-      .expect(400)
-      .then(({ body: { msg } }) => {
-        expect(msg).toBe("Bad request");
-      });
-  });
-  it("404: responds with an error message if id is a valid type but does not exist", () => {
-    return request(app)
-      .get("/api/articles/15")
-      .expect(404)
-      .then(({ body: { msg } }) => {
-        expect(msg).toBe("Article not found");
-      });
-  });
-  it("endpoint.json contains /api/articles/:article_id", () => {
+  it("endpoint.json contains api/topics", () => {
     return request(app)
       .get("/api")
       .then(({ body: { endpoints } }) => {
-        expect(endpoints).toHaveProperty("GET /api/articles/:article_id");
-      });
-  });
-  it("200: responds with individual article with a comment count", () => {
-    return request(app)
-      .get("/api/articles/1")
-      .expect(200)
-      .then(({ body: { article } }) => {
-        expect(article.comment_count).toBe("11");
+        expect(endpoints).toHaveProperty("GET /api/topics");
       });
   });
 });
@@ -332,6 +280,142 @@ describe("GET /api/articles", () => {
   });
 });
 
+describe("GET /api/articles/:articles_id", () => {
+  it("200: responds with individual article", () => {
+    return request(app)
+      .get("/api/articles/2")
+      .expect(200)
+      .then(({ body: { article } }) => {
+        const expectedArticle = {
+          author: "icellusedkars",
+          title: "Sony Vaio; or, The Laptop",
+          article_id: 2,
+          body: "Call me Mitchell. Some years ago—never mind how long precisely—having little or no money in my purse, and nothing particular to interest me on shore, I thought I would buy a laptop about a little and see the codey part of the world. It is a way I have of driving off the spleen and regulating the circulation. Whenever I find myself growing grim about the mouth; whenever it is a damp, drizzly November in my soul; whenever I find myself involuntarily pausing before coffin warehouses, and bringing up the rear of every funeral I meet; and especially whenever my hypos get such an upper hand of me, that it requires a strong moral principle to prevent me from deliberately stepping into the street, and methodically knocking people’s hats off—then, I account it high time to get to coding as soon as I can. This is my substitute for pistol and ball. With a philosophical flourish Cato throws himself upon his sword; I quietly take to the laptop. There is nothing surprising in this. If they but knew it, almost all men in their degree, some time or other, cherish very nearly the same feelings towards the the Vaio with me.",
+          topic: "mitch",
+          created_at: "2020-10-16T05:03:00.000Z",
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        };
+        expect(article).toMatchObject(expectedArticle);
+      });
+  });
+  it("400: responds with an error message if id is not a valid type", () => {
+    return request(app)
+      .get("/api/articles/article3")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
+  it("404: responds with an error message if id is a valid type but does not exist", () => {
+    return request(app)
+      .get("/api/articles/15")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Article not found");
+      });
+  });
+  it("endpoint.json contains /api/articles/:article_id", () => {
+    return request(app)
+      .get("/api")
+      .then(({ body: { endpoints } }) => {
+        expect(endpoints).toHaveProperty("GET /api/articles/:article_id");
+      });
+  });
+  it("200: responds with individual article with a comment count", () => {
+    return request(app)
+      .get("/api/articles/1")
+      .expect(200)
+      .then(({ body: { article } }) => {
+        expect(article.comment_count).toBe("11");
+      });
+  });
+});
+
+describe("PATCH /api/articles/:article_id", () => {
+  it("200: responds with article object with updated votes when adding votes", () => {
+    const newVotes = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(newVotes)
+      .expect(200)
+      .then(({ body: { article } }) => {
+        const expectedArticle = {
+          article_id: 1,
+          title: "Living in the shadow of a great man",
+          topic: "mitch",
+          author: "butter_bridge",
+          body: "I find this existence challenging",
+          created_at: "2020-07-09T20:11:00.000Z",
+          votes: 101,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        };
+
+        expect(article).toMatchObject(expectedArticle);
+      });
+  });
+  it("200: responds with article object with updated votes when removing votes", () => {
+    const newVotes = { inc_votes: -1 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(newVotes)
+      .expect(200)
+      .then(({ body: { article } }) => {
+        const expectedArticle = {
+          article_id: 1,
+          title: "Living in the shadow of a great man",
+          topic: "mitch",
+          author: "butter_bridge",
+          body: "I find this existence challenging",
+          created_at: "2020-07-09T20:11:00.000Z",
+          votes: 99,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        };
+
+        expect(article).toMatchObject(expectedArticle);
+      });
+  });
+  it("400: responds with an error message if request body is invalid", () => {
+    const newVotes = { inc_votes: "update this please" };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(newVotes)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
+  it("400: responds with an error message if id is not a valid type", () => {
+    const newVotes = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/articles/article3")
+      .send(newVotes)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
+  it("404: responds with an error message if id is a valid type but does not exist", () => {
+    const newVotes = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/articles/15")
+      .send(newVotes)
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Article not found");
+      });
+  });
+  it("endpoint.json PATCH /api/articles/:article_id", () => {
+    return request(app)
+      .get("/api")
+      .then(({ body: { endpoints } }) => {
+        expect(endpoints).toHaveProperty("PATCH /api/articles/:article_id");
+      });
+  });
+});
+
 describe("GET /api/articles/:article_id/comments", () => {
   it("200: responds with an array of comments of given article_id", () => {
     return request(app)
@@ -479,90 +563,6 @@ describe("POST /api/articles/:article_id/comments", () => {
   });
 });
 
-describe("PATCH /api/articles/:article_id", () => {
-  it("200: should respond with article object with updated votes when adding votes", () => {
-    const newVotes = { inc_votes: 1 };
-    return request(app)
-      .patch("/api/articles/1")
-      .send(newVotes)
-      .expect(200)
-      .then(({ body: { article } }) => {
-        const expectedArticle = {
-          article_id: 1,
-          title: "Living in the shadow of a great man",
-          topic: "mitch",
-          author: "butter_bridge",
-          body: "I find this existence challenging",
-          created_at: "2020-07-09T20:11:00.000Z",
-          votes: 101,
-          article_img_url:
-            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
-        };
-
-        expect(article).toEqual(expectedArticle);
-      });
-  });
-  it("200: should respond with article object with updated votes when removing votes", () => {
-    const newVotes = { inc_votes: -1 };
-    return request(app)
-      .patch("/api/articles/1")
-      .send(newVotes)
-      .expect(200)
-      .then(({ body: { article } }) => {
-        const expectedArticle = {
-          article_id: 1,
-          title: "Living in the shadow of a great man",
-          topic: "mitch",
-          author: "butter_bridge",
-          body: "I find this existence challenging",
-          created_at: "2020-07-09T20:11:00.000Z",
-          votes: 99,
-          article_img_url:
-            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
-        };
-
-        expect(article).toEqual(expectedArticle);
-      });
-  });
-  it("400: responds with an error message if request body is invalid", () => {
-    const newVotes = { inc_votes: "update this please" };
-    return request(app)
-      .patch("/api/articles/1")
-      .send(newVotes)
-      .expect(400)
-      .then(({ body: { msg } }) => {
-        expect(msg).toBe("Bad request");
-      });
-  });
-  it("400: responds with an error message if id is not a valid type", () => {
-    const newVotes = { inc_votes: 1 };
-    return request(app)
-      .patch("/api/articles/article3")
-      .send(newVotes)
-      .expect(400)
-      .then(({ body: { msg } }) => {
-        expect(msg).toBe("Bad request");
-      });
-  });
-  it("404: responds with an error message if id is a valid type but does not exist", () => {
-    const newVotes = { inc_votes: 1 };
-    return request(app)
-      .patch("/api/articles/15")
-      .send(newVotes)
-      .expect(404)
-      .then(({ body: { msg } }) => {
-        expect(msg).toBe("Article not found");
-      });
-  });
-  it("endpoint.json PATCH /api/articles/:article_id", () => {
-    return request(app)
-      .get("/api")
-      .then(({ body: { endpoints } }) => {
-        expect(endpoints).toHaveProperty("PATCH /api/articles/:article_id");
-      });
-  });
-});
-
 describe("DELETE /api/comments/:comment_id", () => {
   it("204: deletes specific comment and sends no body back", () => {
     return request(app).delete("/api/comments/1").expect(204);
@@ -588,6 +588,81 @@ describe("DELETE /api/comments/:comment_id", () => {
       .get("/api")
       .then(({ body: { endpoints } }) => {
         expect(endpoints).toHaveProperty("DELETE /api/comments/:comment_id");
+      });
+  });
+});
+
+describe("PATCH /api/comments/:comment_id", () => {
+  it("200: responds with updated comment when upvoting", () => {
+    const vote = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/comments/1")
+      .send(vote)
+      .expect(200)
+      .then(({ body: { comment } }) => {
+        const expectedComment = {
+          body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+          votes: 17,
+          author: "butter_bridge",
+          article_id: 9,
+          created_at: "2020-04-06T12:17:00.000Z",
+        };
+
+        expect(comment).toMatchObject(expectedComment);
+      });
+  });
+  it("200: responds with updated comment when downvoting", () => {
+    const newVote = { inc_votes: -1 };
+    return request(app)
+      .patch("/api/comments/1")
+      .send(newVote)
+      .expect(200)
+      .then(({ body: { comment } }) => {
+        const expectedComment = {
+          body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+          votes: 15,
+          author: "butter_bridge",
+          article_id: 9,
+          created_at: "2020-04-06T12:17:00.000Z",
+        };
+        expect(comment).toMatchObject(expectedComment);
+      });
+  });
+  it("400: responds with error message if request body is invalid", () => {
+    const vote = { inc_votes: "update my vote" };
+    return request(app)
+      .patch("/api/comments/1")
+      .send(vote)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
+  it("400: responds with error message if parametric endpoint is not valid", () => {
+    const vote = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/comments/comment1")
+      .send(vote)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
+  it("404: responds with error message if parametric endpoint is valid but does not exist", () => {
+    const vote = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/comments/21")
+      .send(vote)
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Not found");
+      });
+  });
+  it("endpoint.json contains PATCH /api/comments/:comment_id", () => {
+    return request(app)
+      .get("/api")
+      .then(({ body: { endpoints } }) => {
+        expect(endpoints).toHaveProperty("PATCH /api/comments/:comment_id");
       });
   });
 });
@@ -637,12 +712,12 @@ describe("GET /api/users/:username", () => {
   });
   it("404: responds with error message if username is of valid type but doesn't exist", () => {
     return request(app)
-    .get("/api/users/username")
-    .expect(404)
-    .then(( {body : { msg }}) => {
-      expect(msg).toBe("Not found")
-    })
-  })
+      .get("/api/users/username")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Not found");
+      });
+  });
   it("endpoint.json contains GET /api/users/:username", () => {
     return request(app)
       .get("/api")
