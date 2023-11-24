@@ -1,6 +1,12 @@
 const db = require("../db/connection");
 
-exports.selectAllArticles = (topic, sortBy = "created_at", order = "DESC") => {
+exports.selectAllArticles = (
+  topic,
+  sortBy = "created_at",
+  order = "DESC",
+  limit,
+  p
+) => {
   const queryValues = [];
   const validSortBy = [
     "author",
@@ -15,12 +21,14 @@ exports.selectAllArticles = (topic, sortBy = "created_at", order = "DESC") => {
 
   const validOrder = ["ASC", "DESC"];
 
+
+
   if (!validSortBy.includes(sortBy) || !validOrder.includes(order)) {
     return Promise.reject({ status: 400, msg: "Bad request" });
   }
 
   let queryString = ` 
-      SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT (comments.article_id) AS comment_count
+      SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT (comments.article_id)::INT AS comment_count, count(*) OVER()::INT AS total_count
       FROM articles
       FULL OUTER JOIN comments ON articles.article_id = comments.article_id`;
 
@@ -33,8 +41,35 @@ exports.selectAllArticles = (topic, sortBy = "created_at", order = "DESC") => {
 
   queryString += ` ORDER BY ${sortBy} ${order}`;
 
+  if (limit) {
+    if (!+limit) {
+      return Promise.reject({ status: 400, msg: "Bad request" });
+    }
+    queryString += ` LIMIT ${limit}`;
+  } else {
+    queryString += ` LIMIT 10`;
+  }
+
+  if (limit && p) {
+    if (!+p) {
+      return Promise.reject({ status: 400, msg: "Bad request" });
+    }
+    queryString += ` OFFSET ${p * limit}`;
+  }
+
   return db.query(queryString, queryValues).then(({ rows }) => {
-    return rows;
+    if (!topic && !rows.length) {
+      return Promise.reject({ status: 404, msg: "Not found" });
+    }
+
+    let totalCount = 0;
+    if (rows[0]) {
+      totalCount += rows[0].total_count;
+    }
+    rows.forEach((row) => {
+      delete row.total_count;
+    });
+    return { rows, totalCount };
   });
 };
 
@@ -79,8 +114,10 @@ exports.createArticle = (article) => {
   const articleArray = [author, title, body, topic];
 
   if (!article_img_url) {
-    articleArray.push( "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700")
-  } else (articleArray.push(article_img_url))
+    articleArray.push(
+      "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700"
+    );
+  } else articleArray.push(article_img_url);
 
   return db
     .query(
