@@ -87,7 +87,7 @@ describe("GET /api/articles", () => {
           created_at: expect.any(String),
           votes: expect.any(Number),
           article_img_url: expect.any(String),
-          comment_count: expect.any(String),
+          comment_count: expect.any(Number),
         };
 
         expect(articles.length).toBe(13);
@@ -107,7 +107,7 @@ describe("GET /api/articles", () => {
             return article;
           }
         });
-        expect(+article1[0].comment_count).toBe(11);
+        expect(article1[0].comment_count).toBe(11);
       });
   });
   it("200: articles should be sorted in descending order by created_at", () => {
@@ -139,7 +139,7 @@ describe("GET /api/articles", () => {
             created_at: expect.any(String),
             votes: expect.any(Number),
             article_img_url: expect.any(String),
-            comment_count: expect.any(String),
+            comment_count: expect.any(Number),
           };
 
           expect(articles.length).toBe(12);
@@ -161,7 +161,7 @@ describe("GET /api/articles", () => {
             created_at: expect.any(String),
             votes: expect.any(Number),
             article_img_url: expect.any(String),
-            comment_count: expect.any(String),
+            comment_count: expect.any(Number),
           };
 
           expect(articles.length).toBe(13);
@@ -209,7 +209,7 @@ describe("GET /api/articles", () => {
             created_at: expect.any(String),
             votes: expect.any(Number),
             article_img_url: expect.any(String),
-            comment_count: expect.any(String),
+            comment_count: expect.any(Number),
           };
 
           expect(articles.length).toBe(13);
@@ -251,7 +251,7 @@ describe("GET /api/articles", () => {
             created_at: expect.any(String),
             votes: expect.any(Number),
             article_img_url: expect.any(String),
-            comment_count: expect.any(String),
+            comment_count: expect.any(Number),
           };
 
           expect(articles.length).toBe(13);
@@ -279,6 +279,7 @@ describe("GET /api/articles", () => {
     });
   });
 });
+
 describe("GET /api/articles/:articles_id", () => {
   it("200: responds with individual article", () => {
     return request(app)
