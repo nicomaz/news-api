@@ -8,3 +8,4 @@ exports.getAllEndpoints = () => {
       return parsedEndpoints;
     });
 };
+

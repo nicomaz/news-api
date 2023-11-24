@@ -330,8 +330,7 @@ describe("GET /api/articles", () => {
         });
     });
   });
-  });
-
+});
 
 describe("GET /api/articles/:article_id/comments", () => {
   it("200: responds with an array of comments of given article_id", () => {
