@@ -629,6 +629,36 @@ describe("PATCH /api/comments/:comment_id", () => {
       expect(comment).toMatchObject(expectedComment)
     })
   })
+  it("400: responds with error message if request body is invalid", () => {
+    const vote = { inc_votes: "update my vote" }
+    return request(app)
+    .patch("/api/comments/1")
+    .send(vote)
+    .expect(400)
+    .then(({ body: { msg }}) => {
+      expect(msg).toBe("Bad request")
+    })
+  })
+  it("400: responds with error message if parametric endpoint is not valid", () => {
+    const vote = { inc_votes: 1 }
+    return request(app)
+    .patch("/api/comments/comment1")
+    .send(vote)
+    .expect(400)
+    .then(( { body : { msg }}) => {
+      expect(msg).toBe("Bad request")
+    })
+  })
+  it("404: responds with error message if parametric endpoint is valid but does not exist", () => {
+    const vote = { inc_votes: 1 }
+    return request(app)
+    .patch("/api/comments/21")
+    .send(vote)
+    .expect(404)
+    .then(( { body: { msg }}) => {
+      expect(msg).toBe("Not found")
+    })
+  })
 })
 
 describe("GET /api/users", () => {
