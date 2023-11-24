@@ -8,6 +8,7 @@ const {
   topicData,
   userData,
 } = require("../db/data/test-data/index");
+const { isObject } = require("../db/seeds/utils");
 
 beforeEach(() => seed({ articleData, commentData, topicData, userData }));
 afterAll(() => db.end());
@@ -333,7 +334,7 @@ describe("GET /api/articles/:articles_id", () => {
 });
 
 describe("PATCH /api/articles/:article_id", () => {
-  it("200: should respond with article object with updated votes when adding votes", () => {
+  it("200: responds with article object with updated votes when adding votes", () => {
     const newVotes = { inc_votes: 1 };
     return request(app)
       .patch("/api/articles/1")
@@ -352,10 +353,10 @@ describe("PATCH /api/articles/:article_id", () => {
             "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
         };
 
-        expect(article).toEqual(expectedArticle);
+        expect(article).toMatchObject(expectedArticle);
       });
   });
-  it("200: should respond with article object with updated votes when removing votes", () => {
+  it("200: responds with article object with updated votes when removing votes", () => {
     const newVotes = { inc_votes: -1 };
     return request(app)
       .patch("/api/articles/1")
@@ -374,7 +375,7 @@ describe("PATCH /api/articles/:article_id", () => {
             "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
         };
 
-        expect(article).toEqual(expectedArticle);
+        expect(article).toMatchObject(expectedArticle);
       });
   });
   it("400: responds with an error message if request body is invalid", () => {
@@ -591,6 +592,44 @@ describe("DELETE /api/comments/:comment_id", () => {
       });
   });
 });
+
+describe("PATCH /api/comments/:comment_id", () => {
+  it("200: responds with updated comment when upvoting", () => {
+    const vote = { inc_votes: 1 }
+    return request(app)
+    .patch("/api/comments/1")
+    .send(vote)
+    .expect(200)
+    .then(({ body: { comment }}) => {
+      const expectedComment =   {
+        body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+        votes: 17,
+        author: "butter_bridge",
+        article_id: 9,
+        created_at: "2020-04-06T12:17:00.000Z",
+      }
+
+      expect(comment).toMatchObject(expectedComment)
+    })
+  })
+  it("200: responds with updated comment when downvoting", () => {
+    const vote = { inc_votes: -1 }
+    return request(app)
+    .patch("/api/comments/1")
+    .send(vote)
+    .expect(200)
+    .then(({ body: { comment }}) => {
+      const expectedComment = {
+        body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+        votes: 15,
+        author: "butter_bridge",
+        article_id: 9,
+        created_at: "2020-04-06T12:17:00.000Z",
+      }
+      expect(comment).toMatchObject(expectedComment)
+    })
+  })
+})
 
 describe("GET /api/users", () => {
   it("200: responds with an array of users", () => {

@@ -14,7 +14,9 @@ exports.selectCommentsByArticleId = (articleId) => {
 };
 
 exports.insertComment = (comment, articleId) => {
-  const { postComment: { username, body } } = comment;
+  const {
+    postComment: { username, body },
+  } = comment;
   const commentArray = [body, username, articleId];
   return db
     .query(
@@ -40,7 +42,21 @@ exports.removeComment = (articleId) => {
     )
     .then(({ rows }) => {
       if (!rows.length) {
-        return Promise.reject({status: 404, msg: "Comment does not exist"})
+        return Promise.reject({ status: 404, msg: "Comment does not exist" });
       }
+    });
+};
+
+exports.changeCommentVotes = (commentId, vote) => {
+  return db
+    .query(
+      `UPDATE comments
+    SET votes = votes + $2
+    WHERE comment_id = $1
+    RETURNING *`,
+      [commentId, vote]
+    )
+    .then(({ rows }) => {
+      return rows[0];
     });
 };
