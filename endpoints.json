@@ -46,7 +46,7 @@
     }
   },
   "GET /api/articles/:article_id": {
-    "description": "serves up article based on parametric endpoint",
+    "description": "serves up an article object based on parametric endpoint",
     "queries": [],
     "exampleResponse": {
       "article": [
@@ -86,19 +86,28 @@
       ]
     }
   },
+  "GET /api/users/:username": {
+    "description": "serves up a user object based on parametric endpoint",
+    "queries": [],
+    "exampleResponse": {
+      "user": {
+        "username": "butter_bridge",
+        "name": "jonny",
+        "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+      }
+    }
+  },
   "POST /api/articles/:article_id/comments": {
     "description": "posts comment on article based on parametric endpoint",
     "queries": [],
     "exampleResponse": {
-      "comment": [
-        {
-          "body": "This is a comment",
-          "author": "icellusedkars",
-          "article_id": 1,
-          "votes": 0,
-          "created_at": " 2020-05-06T01:14:00.000Z"
-        }
-      ]
+      "comment": {
+        "body": "This is a comment",
+        "author": "icellusedkars",
+        "article_id": 1,
+        "votes": 0,
+        "created_at": " 2020-05-06T01:14:00.000Z"
+      }
     },
     "exampleRequest": {
       "username": "icellusedkars",

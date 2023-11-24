@@ -643,6 +643,13 @@ describe("GET /api/users/:username", () => {
       expect(msg).toBe("Not found")
     })
   })
+  it("endpoint.json contains GET /api/users/:username", () => {
+    return request(app)
+      .get("/api")
+      .then(({ body: { endpoints } }) => {
+        expect(endpoints).toHaveProperty("GET /api/users/:username");
+      });
+  });
 });
 
 describe("ANY /notAPath", () => {
