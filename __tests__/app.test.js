@@ -13,7 +13,6 @@ const { isObject } = require("../db/seeds/utils");
 beforeEach(() => seed({ articleData, commentData, topicData, userData }));
 afterAll(() => db.end());
 
-
 describe("GET /api", () => {
   it("200: responds with an object of available endpoints", () => {
     return request(app)
@@ -595,71 +594,78 @@ describe("DELETE /api/comments/:comment_id", () => {
 
 describe("PATCH /api/comments/:comment_id", () => {
   it("200: responds with updated comment when upvoting", () => {
-    const vote = { inc_votes: 1 }
+    const vote = { inc_votes: 1 };
     return request(app)
-    .patch("/api/comments/1")
-    .send(vote)
-    .expect(200)
-    .then(({ body: { comment }}) => {
-      const expectedComment =   {
-        body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
-        votes: 17,
-        author: "butter_bridge",
-        article_id: 9,
-        created_at: "2020-04-06T12:17:00.000Z",
-      }
+      .patch("/api/comments/1")
+      .send(vote)
+      .expect(200)
+      .then(({ body: { comment } }) => {
+        const expectedComment = {
+          body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+          votes: 17,
+          author: "butter_bridge",
+          article_id: 9,
+          created_at: "2020-04-06T12:17:00.000Z",
+        };
 
-      expect(comment).toMatchObject(expectedComment)
-    })
-  })
+        expect(comment).toMatchObject(expectedComment);
+      });
+  });
   it("200: responds with updated comment when downvoting", () => {
-    const vote = { inc_votes: -1 }
+    const newVote = { inc_votes: -1 };
     return request(app)
-    .patch("/api/comments/1")
-    .send(vote)
-    .expect(200)
-    .then(({ body: { comment }}) => {
-      const expectedComment = {
-        body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
-        votes: 15,
-        author: "butter_bridge",
-        article_id: 9,
-        created_at: "2020-04-06T12:17:00.000Z",
-      }
-      expect(comment).toMatchObject(expectedComment)
-    })
-  })
+      .patch("/api/comments/1")
+      .send(newVote)
+      .expect(200)
+      .then(({ body: { comment } }) => {
+        const expectedComment = {
+          body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+          votes: 15,
+          author: "butter_bridge",
+          article_id: 9,
+          created_at: "2020-04-06T12:17:00.000Z",
+        };
+        expect(comment).toMatchObject(expectedComment);
+      });
+  });
   it("400: responds with error message if request body is invalid", () => {
-    const vote = { inc_votes: "update my vote" }
+    const vote = { inc_votes: "update my vote" };
     return request(app)
-    .patch("/api/comments/1")
-    .send(vote)
-    .expect(400)
-    .then(({ body: { msg }}) => {
-      expect(msg).toBe("Bad request")
-    })
-  })
+      .patch("/api/comments/1")
+      .send(vote)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
   it("400: responds with error message if parametric endpoint is not valid", () => {
-    const vote = { inc_votes: 1 }
+    const vote = { inc_votes: 1 };
     return request(app)
-    .patch("/api/comments/comment1")
-    .send(vote)
-    .expect(400)
-    .then(( { body : { msg }}) => {
-      expect(msg).toBe("Bad request")
-    })
-  })
+      .patch("/api/comments/comment1")
+      .send(vote)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
   it("404: responds with error message if parametric endpoint is valid but does not exist", () => {
-    const vote = { inc_votes: 1 }
+    const vote = { inc_votes: 1 };
     return request(app)
-    .patch("/api/comments/21")
-    .send(vote)
-    .expect(404)
-    .then(( { body: { msg }}) => {
-      expect(msg).toBe("Not found")
-    })
-  })
-})
+      .patch("/api/comments/21")
+      .send(vote)
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Not found");
+      });
+  });
+  it("endpoint.json contains PATCH /api/comments/:comment_id", () => {
+    return request(app)
+      .get("/api")
+      .then(({ body: { endpoints } }) => {
+        expect(endpoints).toHaveProperty("PATCH /api/comments/:comment_id");
+      });
+  });
+});
 
 describe("GET /api/users", () => {
   it("200: responds with an array of users", () => {
