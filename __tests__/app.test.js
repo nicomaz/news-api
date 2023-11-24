@@ -327,6 +327,26 @@ describe("GET /api/articles", () => {
           expect(msg).toBe("Bad request");
         });
     });
+    it("404: responds with error message if the page query is valid but doesn't exist", () => {
+      return request(app)
+        .get("/api/articles?limit=2&p=20")
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Not found");
+        });
+    });
+    it("200: accepts a combination of queries", () => {
+      return request(app)
+        .get("/api/articles?topic=mitch&sort_by=article_id&order=ASC&limit=2&p=1")
+        .expect(200)
+        .then(({ body: { articles, total_count } }) => {
+          expect(total_count).toBe(12);
+          expect(articles.length).toBe(2);
+          expect(articles).toBeSortedBy("article_id", { descending: false });
+          expect(articles[0].title).toBe("Eight pug gifs that remind me of mitch")
+          expect(articles[1].title).toBe("Student SUES Mitch!")
+        });
+    });
   });
 });
 

@@ -1,7 +1,12 @@
 const db = require("../db/connection");
 
-exports.selectAllArticles = ( topic, sortBy = "created_at", order = "DESC", limit, p ) => {
-  
+exports.selectAllArticles = (
+  topic,
+  sortBy = "created_at",
+  order = "DESC",
+  limit,
+  p
+) => {
   const queryValues = [];
   const validSortBy = [
     "author",
@@ -15,6 +20,8 @@ exports.selectAllArticles = ( topic, sortBy = "created_at", order = "DESC", limi
   ];
 
   const validOrder = ["ASC", "DESC"];
+
+
 
   if (!validSortBy.includes(sortBy) || !validOrder.includes(order)) {
     return Promise.reject({ status: 400, msg: "Bad request" });
@@ -35,25 +42,33 @@ exports.selectAllArticles = ( topic, sortBy = "created_at", order = "DESC", limi
   queryString += ` ORDER BY ${sortBy} ${order}`;
 
   if (limit) {
-    queryString += ` LIMIT $1`;
-    queryValues.push(limit);
+    if (!+limit) {
+      return Promise.reject({ status: 400, msg: "Bad request" });
+    }
+    queryString += ` LIMIT ${limit}`;
   } else {
     queryString += ` LIMIT 10`;
   }
 
   if (limit && p) {
-    queryString += ` OFFSET $2`;
-    queryValues.push(p * limit);
+    if (!+p) {
+      return Promise.reject({ status: 400, msg: "Bad request" });
+    }
+    queryString += ` OFFSET ${p * limit}`;
   }
 
   return db.query(queryString, queryValues).then(({ rows }) => {
+    if (!topic && !rows.length) {
+      return Promise.reject({ status: 404, msg: "Not found" });
+    }
+
     let totalCount = 0;
     if (rows[0]) {
       totalCount += rows[0].total_count;
     }
     rows.forEach((row) => {
       delete row.total_count;
-    })
+    });
     return { rows, totalCount };
   });
 };
