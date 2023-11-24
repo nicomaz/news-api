@@ -337,14 +337,34 @@ describe("GET /api/articles", () => {
     });
     it("200: accepts a combination of queries", () => {
       return request(app)
-        .get("/api/articles?topic=mitch&sort_by=article_id&order=ASC&limit=2&p=1")
+        .get(
+          "/api/articles?topic=mitch&sort_by=article_id&order=ASC&limit=2&p=1"
+        )
         .expect(200)
         .then(({ body: { articles, total_count } }) => {
           expect(total_count).toBe(12);
           expect(articles.length).toBe(2);
           expect(articles).toBeSortedBy("article_id", { descending: false });
-          expect(articles[0].title).toBe("Eight pug gifs that remind me of mitch")
-          expect(articles[1].title).toBe("Student SUES Mitch!")
+          expect(articles[0].title).toBe(
+            "Eight pug gifs that remind me of mitch"
+          );
+          expect(articles[1].title).toBe("Student SUES Mitch!");
+        });
+    });
+    it("endpoint.json contains limit as a query for GET /api/articles", () => {
+      return request(app)
+        .get("/api")
+        .then(({ body: { endpoints } }) => {
+          const topicQueries = endpoints["GET /api/articles"].queries;
+          expect(topicQueries.includes("limit")).toBe(true);
+        });
+    });
+    it("endpoint.json contains p as a query for GET /api/articles", () => {
+      return request(app)
+        .get("/api")
+        .then(({ body: { endpoints } }) => {
+          const topicQueries = endpoints["GET /api/articles"].queries;
+          expect(topicQueries.includes("p")).toBe(true);
         });
     });
   });
