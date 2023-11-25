@@ -1038,6 +1038,13 @@ describe("POST /api/topics", () => {
       expect(msg).toBe("Bad request")
     })
   })
+  it("endpoint.json contains POST /api/topicss", () => {
+    return request(app)
+      .get("/api")
+      .then(({ body: { endpoints } }) => {
+        expect(endpoints).toHaveProperty("POST /api/topics");
+      });
+  });
   });
 
 
