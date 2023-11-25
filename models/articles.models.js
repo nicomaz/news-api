@@ -21,8 +21,6 @@ exports.selectAllArticles = (
 
   const validOrder = ["ASC", "DESC"];
 
-
-
   if (!validSortBy.includes(sortBy) || !validOrder.includes(order)) {
     return Promise.reject({ status: 400, msg: "Bad request" });
   }

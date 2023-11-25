@@ -1,23 +1,36 @@
 const db = require("../db/connection");
 
-exports.selectCommentsByArticleId = (articleId) => {
-  return db
-    .query(
-      `SELECT * FROM comments
-    WHERE article_id = $1
-    ORDER BY created_at DESC`,
-      [articleId]
-    )
-    .then(({ rows }) => {
-      return rows;
-    });
+exports.selectCommentsByArticleId = (articleId, limit, p) => {
+  const queryArgs = [articleId];
+
+  let queryStr = `SELECT *
+  FROM comments
+  WHERE article_id = $1
+  ORDER BY created_at DESC`;
+
+  if (limit) {
+    queryStr += ` LIMIT $2`;
+    queryArgs.push(limit);
+  }
+
+  if (p) {
+    queryStr += ` OFFSET $3`
+    queryArgs.push(p * limit)
+  }
+
+  return db.query(queryStr, queryArgs).then(({ rows }) => {
+    if(p >= 1 && !rows.length) {
+      return Promise.reject({status: 404, msg: "Not found"})
+    }
+    return rows;
+  });
 };
 
 exports.insertComment = (comment, articleId) => {
   const {
     postComment: { username, body },
   } = comment;
-  
+
   const commentArray = [body, username, articleId];
   return db
     .query(
@@ -58,8 +71,8 @@ exports.changeCommentVotes = (commentId, vote) => {
       [commentId, vote]
     )
     .then(({ rows }) => {
-      if(!rows.length) {
-        return Promise.reject({status: 404, msg: "Not found"})
+      if (!rows.length) {
+        return Promise.reject({ status: 404, msg: "Not found" });
       }
       return rows[0];
     });
