@@ -98,7 +98,7 @@
     }
   },
   "POST /api/articles": {
-    "description": "serves up an article object",
+    "description": "creates a new article, serves up an article object",
     "queries": [],
     "exampleResponse": {
       "author": "icellusedkars",
@@ -134,6 +134,18 @@
     "exampleRequest": {
       "username": "icellusedkars",
       "body": "This is a comment"
+    }
+  },
+  "POST /api/topics": {
+    "description": "creates a new topic, serves up new topic object",
+    "queries": [],
+    "exmapleResponse": {
+      "slug": "topic",
+      "description": "this is a new topic"
+    },
+    "exampleRequest": {
+      "slug": "topic",
+      "description": "this is a new topic"
     }
   },
   "PATCH /api/articles/:article_id": {

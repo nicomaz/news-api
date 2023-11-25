@@ -47,32 +47,6 @@ describe("GET /api", () => {
   });
 });
 
-describe("GET /api/topics", () => {
-  it("200: responds with an array of all topics", () => {
-    return request(app)
-      .get("/api/topics")
-      .expect(200)
-      .then(({ body: { topics } }) => {
-        const expectedTopic = {
-          slug: expect.any(String),
-          description: expect.any(String),
-        };
-
-        expect(topics.length).toBe(3);
-        topics.forEach((topic) => {
-          expect(topic).toMatchObject(expectedTopic);
-        });
-      });
-  });
-  it("endpoint.json contains api/topics", () => {
-    return request(app)
-      .get("/api")
-      .then(({ body: { endpoints } }) => {
-        expect(endpoints).toHaveProperty("GET /api/topics");
-      });
-  });
-});
-
 describe("GET /api/articles", () => {
   it("200: responds with an array of first 10 articles", () => {
     return request(app)
@@ -991,6 +965,88 @@ describe("GET /api/users/:username", () => {
       });
   });
 });
+
+describe("GET /api/topics", () => {
+  it("200: responds with an array of all topics", () => {
+    return request(app)
+      .get("/api/topics")
+      .expect(200)
+      .then(({ body: { topics } }) => {
+        const expectedTopic = {
+          slug: expect.any(String),
+          description: expect.any(String),
+        };
+
+        expect(topics.length).toBe(3);
+        topics.forEach((topic) => {
+          expect(topic).toMatchObject(expectedTopic);
+        });
+      });
+  });
+  it("endpoint.json contains api/topics", () => {
+    return request(app)
+      .get("/api")
+      .then(({ body: { endpoints } }) => {
+        expect(endpoints).toHaveProperty("GET /api/topics");
+      });
+  });
+});
+
+describe("POST /api/topics", () => {
+  it("201: responds with the inserted topic", () => {
+    const newTopic = { slug: "topic", description: "this is a new topic" };
+    return request(app)
+      .post("/api/topics")
+      .send(newTopic)
+      .expect(201)
+      .then(({ body: { topic } }) => {
+        const expectedTopic = {
+          slug: "topic",
+          description: "this is a new topic",
+        };
+
+        expect(topic).toMatchObject(expectedTopic);
+      });
+  });
+  it("400: responds with an error message when request body does not contain a slug key", () => {
+    const newTopic = { description: "no name"}
+    return request(app)
+    .post("/api/topics")
+    .send(newTopic)
+    .expect(400)
+    .then(( { body: { msg } }) => {
+      expect(msg).toBe("Bad request")
+    })
+  })
+  it("400: responds with an error message when slug in request body is left empty", () => {
+    const newTopic = { slug: "", description: "no name" }
+    return request(app)
+    .post("/api/topics")
+    .send(newTopic)
+    .expect(400)
+    .then(( { body: { msg } }) => {
+      expect(msg).toBe("Bad request")
+    })
+  })
+  it("400: responds with an error message when topic slug already exists", () => {
+    const newTopic = { slug: "cats" }
+    return request(app)
+    .post("/api/topics")
+    .send(newTopic)
+    .expect(400)
+    .then(( { body: { msg } }) => {
+      expect(msg).toBe("Bad request")
+    })
+  })
+  it("endpoint.json contains POST /api/topicss", () => {
+    return request(app)
+      .get("/api")
+      .then(({ body: { endpoints } }) => {
+        expect(endpoints).toHaveProperty("POST /api/topics");
+      });
+  });
+  });
+
 
 describe("ANY /notAPath", () => {
   test("404: responds with an error message if path is not found", () => {
