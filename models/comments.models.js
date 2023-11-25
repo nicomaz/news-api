@@ -3,7 +3,8 @@ const db = require("../db/connection");
 exports.selectCommentsByArticleId = (articleId, limit, p) => {
   const queryArgs = [articleId];
 
-  let queryStr = `SELECT * FROM comments
+  let queryStr = `SELECT *
+  FROM comments
   WHERE article_id = $1
   ORDER BY created_at DESC`;
 
@@ -14,10 +15,13 @@ exports.selectCommentsByArticleId = (articleId, limit, p) => {
 
   if (p) {
     queryStr += ` OFFSET $3`
-    queryArgs.push(p)
+    queryArgs.push(p * limit)
   }
 
   return db.query(queryStr, queryArgs).then(({ rows }) => {
+    if(p >= 1 && !rows.length) {
+      return Promise.reject({status: 404, msg: "Not found"})
+    }
     return rows;
   });
 };
