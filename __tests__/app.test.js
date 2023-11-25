@@ -994,22 +994,52 @@ describe("GET /api/topics", () => {
 
 describe("POST /api/topics", () => {
   it("201: responds with the inserted topic", () => {
-    const newTopic = { slug: "topic", description: "this is a new topic"}
+    const newTopic = { slug: "topic", description: "this is a new topic" };
+    return request(app)
+      .post("/api/topics")
+      .send(newTopic)
+      .expect(201)
+      .then(({ body: { topic } }) => {
+        const expectedTopic = {
+          slug: "topic",
+          description: "this is a new topic",
+        };
+
+        expect(topic).toMatchObject(expectedTopic);
+      });
+  });
+  it("400: responds with an error message when request body does not contain a slug key", () => {
+    const newTopic = { description: "no name"}
     return request(app)
     .post("/api/topics")
     .send(newTopic)
-    .expect(201)
-    .then(( { body: { topic }} ) => {
-      const expectedTopic = {
-        slug: "topic",
-        description: "this is a new topic"
-      }
-
-      expect(topic).toMatchObject(expectedTopic)
+    .expect(400)
+    .then(( { body: { msg } }) => {
+      expect(msg).toBe("Bad request")
     })
-
   })
-})
+  it("400: responds with an error message when slug in request body is left empty", () => {
+    const newTopic = { slug: "", description: "no name" }
+    return request(app)
+    .post("/api/topics")
+    .send(newTopic)
+    .expect(400)
+    .then(( { body: { msg } }) => {
+      expect(msg).toBe("Bad request")
+    })
+  })
+  it("400: responds with an error message when topic slug already exists", () => {
+    const newTopic = { slug: "cats" }
+    return request(app)
+    .post("/api/topics")
+    .send(newTopic)
+    .expect(400)
+    .then(( { body: { msg } }) => {
+      expect(msg).toBe("Bad request")
+    })
+  })
+  });
+
 
 describe("ANY /notAPath", () => {
   test("404: responds with an error message if path is not found", () => {
