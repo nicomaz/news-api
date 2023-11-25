@@ -657,6 +657,57 @@ describe("GET /api/articles/:article_id/comments", () => {
         );
       });
   });
+  describe("GET api/articles:article_id/comments?limit=", () => {
+    it("200: responds with an array of comments of an article limited by limit query", () => {
+      return request(app)
+        .get("/api/articles/1/comments?limit=3")
+        .expect(200)
+        .then(({ body: { comments } }) => {
+          expect(comments.length).toBe(3);
+
+          comments.forEach((comment) => {
+            expect(comment.article_id).toBe(1);
+          });
+
+          expect(comments[0].comment_id).toBe(5);
+          expect(comments[1].comment_id).toBe(2);
+          expect(comments[2].comment_id).toBe(18);
+        });
+    });
+    it("400: responds with an error message when a limit query of an invalid type is passed", () => {
+      return request(app)
+        .get("/api/articles/1/comments?limit=one")
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Bad request");
+        });
+    });
+    it("400: responds with an error message when a negative limit query is passed", () => {
+      return request(app)
+        .get("/api/articles/1/comments?limit=-1")
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Bad request");
+        });
+    });
+  });
+  describe("GET api/articles/:article_id/comments?limit= &p=", () => {
+    it("200: responds with a limited array of comments starting from the page query", () => {
+      return request(app)
+      .get("/api/articles/1/comments?limit=2&p=2")
+      .expect(200)
+      .then(({ body: { comments } }) => {
+        expect(comments.length).toBe(2)
+
+        comments.forEach((comment) => {
+          expect(comment.article_id).toBe(1)
+        })
+
+        expect(comments[0].comment_id).toBe(18)
+        expect(comments[1].comment_id).toBe(13)
+      })
+    })
+  })
 });
 
 describe("POST /api/articles/:article_id/comments", () => {
