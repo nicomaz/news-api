@@ -47,32 +47,6 @@ describe("GET /api", () => {
   });
 });
 
-describe("GET /api/topics", () => {
-  it("200: responds with an array of all topics", () => {
-    return request(app)
-      .get("/api/topics")
-      .expect(200)
-      .then(({ body: { topics } }) => {
-        const expectedTopic = {
-          slug: expect.any(String),
-          description: expect.any(String),
-        };
-
-        expect(topics.length).toBe(3);
-        topics.forEach((topic) => {
-          expect(topic).toMatchObject(expectedTopic);
-        });
-      });
-  });
-  it("endpoint.json contains api/topics", () => {
-    return request(app)
-      .get("/api")
-      .then(({ body: { endpoints } }) => {
-        expect(endpoints).toHaveProperty("GET /api/topics");
-      });
-  });
-});
-
 describe("GET /api/articles", () => {
   it("200: responds with an array of first 10 articles", () => {
     return request(app)
@@ -991,6 +965,51 @@ describe("GET /api/users/:username", () => {
       });
   });
 });
+
+describe("GET /api/topics", () => {
+  it("200: responds with an array of all topics", () => {
+    return request(app)
+      .get("/api/topics")
+      .expect(200)
+      .then(({ body: { topics } }) => {
+        const expectedTopic = {
+          slug: expect.any(String),
+          description: expect.any(String),
+        };
+
+        expect(topics.length).toBe(3);
+        topics.forEach((topic) => {
+          expect(topic).toMatchObject(expectedTopic);
+        });
+      });
+  });
+  it("endpoint.json contains api/topics", () => {
+    return request(app)
+      .get("/api")
+      .then(({ body: { endpoints } }) => {
+        expect(endpoints).toHaveProperty("GET /api/topics");
+      });
+  });
+});
+
+describe("POST /api/topics", () => {
+  it("201: responds with the inserted topic", () => {
+    const newTopic = { slug: "topic", description: "this is a new topic"}
+    return request(app)
+    .post("/api/topics")
+    .send(newTopic)
+    .expect(201)
+    .then(( { body: { topic }} ) => {
+      const expectedTopic = {
+        slug: "topic",
+        description: "this is a new topic"
+      }
+
+      expect(topic).toMatchObject(expectedTopic)
+    })
+
+  })
+})
 
 describe("ANY /notAPath", () => {
   test("404: responds with an error message if path is not found", () => {
