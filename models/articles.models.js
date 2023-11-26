@@ -131,3 +131,8 @@ exports.createArticle = (article) => {
       return rows[0];
     });
 };
+
+exports.removeArticle = (articleId) => {
+  return db.query(`DELETE FROM articles
+  WHERE article_id = $1`, [articleId])
+}

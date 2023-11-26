@@ -4,6 +4,7 @@ const {
   selectAllArticles,
   changeArticleVotes,
   createArticle,
+  removeArticle,
 } = require("../models/articles.models");
 
 exports.getArticles = (req, res, next) => {
@@ -53,3 +54,15 @@ exports.postArticle = (req, res, next) => {
   })
   .catch(next)
 };
+
+exports.deleteArticle = (req, res, next) => {
+  const { article_id } = req.params
+
+  const articlePromises = [checkExists("articles", "article_id", article_id), removeArticle(article_id)]
+
+  Promise.all(articlePromises)
+  .then(() => {
+    res.status(204).send()
+  })
+  .catch(next)
+}
