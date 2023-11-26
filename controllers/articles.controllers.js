@@ -4,6 +4,7 @@ const {
   selectAllArticles,
   changeArticleVotes,
   createArticle,
+  removeArticle,
 } = require("../models/articles.models");
 
 exports.getArticles = (req, res, next) => {
@@ -53,3 +54,11 @@ exports.postArticle = (req, res, next) => {
   })
   .catch(next)
 };
+
+exports.deleteArticle = (req, res, next) => {
+  const { article_id } = req.params
+  removeArticle(article_id)
+  .then(() => {
+    res.status(204).send()
+  })
+}

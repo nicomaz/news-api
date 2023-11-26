@@ -570,6 +570,22 @@ describe("POST /api/articles", () => {
   });
 });
 
+describe("DELETE /api/articles/:article_id", () => {
+  it("204: deletes specific article and sends no body back", () => {
+    return request(app)
+      .delete("/api/articles/1")
+      .expect(204)
+      .then(() => {
+        return db.query(`SELECT * FROM comments`);
+      })
+      .then(({ rows }) => {
+        rows.forEach((row) => {
+          expect(row.article_id === 1).toBe(false);
+        });
+      });
+  })
+});
+
 describe("GET /api/articles/:article_id/comments", () => {
   it("200: responds with an array of comments of given article_id", () => {
     return request(app)
@@ -1009,35 +1025,35 @@ describe("POST /api/topics", () => {
       });
   });
   it("400: responds with an error message when request body does not contain a slug key", () => {
-    const newTopic = { description: "no name"}
+    const newTopic = { description: "no name" };
     return request(app)
-    .post("/api/topics")
-    .send(newTopic)
-    .expect(400)
-    .then(( { body: { msg } }) => {
-      expect(msg).toBe("Bad request")
-    })
-  })
+      .post("/api/topics")
+      .send(newTopic)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
   it("400: responds with an error message when slug in request body is left empty", () => {
-    const newTopic = { slug: "", description: "no name" }
+    const newTopic = { slug: "", description: "no name" };
     return request(app)
-    .post("/api/topics")
-    .send(newTopic)
-    .expect(400)
-    .then(( { body: { msg } }) => {
-      expect(msg).toBe("Bad request")
-    })
-  })
+      .post("/api/topics")
+      .send(newTopic)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
   it("400: responds with an error message when topic slug already exists", () => {
-    const newTopic = { slug: "cats" }
+    const newTopic = { slug: "cats" };
     return request(app)
-    .post("/api/topics")
-    .send(newTopic)
-    .expect(400)
-    .then(( { body: { msg } }) => {
-      expect(msg).toBe("Bad request")
-    })
-  })
+      .post("/api/topics")
+      .send(newTopic)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
   it("endpoint.json contains POST /api/topicss", () => {
     return request(app)
       .get("/api")
@@ -1045,8 +1061,7 @@ describe("POST /api/topics", () => {
         expect(endpoints).toHaveProperty("POST /api/topics");
       });
   });
-  });
-
+});
 
 describe("ANY /notAPath", () => {
   test("404: responds with an error message if path is not found", () => {
