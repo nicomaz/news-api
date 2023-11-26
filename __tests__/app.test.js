@@ -584,6 +584,22 @@ describe("DELETE /api/articles/:article_id", () => {
         });
       });
   })
+  it("400: responds with error message when given an invalid article id", () => {
+    return request(app)
+    .delete("/api/articles/one")
+    .expect(400)
+    .then(({ body: { msg } }) => {
+      expect(msg).toBe("Bad request")
+    })
+  })
+  it("404: responds with error message when given a valid but non-existent article id", () => {
+    return request(app)
+    .delete("/api/articles/20")
+    .expect(404)
+    .then(( { body: { msg } }) => {
+      expect(msg).toBe("Not found")
+    })
+  })
 });
 
 describe("GET /api/articles/:article_id/comments", () => {

@@ -57,8 +57,12 @@ exports.postArticle = (req, res, next) => {
 
 exports.deleteArticle = (req, res, next) => {
   const { article_id } = req.params
-  removeArticle(article_id)
+
+  const articlePromises = [checkExists("articles", "article_id", article_id), removeArticle(article_id)]
+
+  Promise.all(articlePromises)
   .then(() => {
     res.status(204).send()
   })
+  .catch(next)
 }
