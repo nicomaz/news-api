@@ -178,5 +178,9 @@
   "DELETE /api/comments/:comment_id": {
     "description": "removes comment based on parametric endpoint",
     "queries": []
+  },
+  "DELETE /api/articles/:article_id": {
+    "description": "removes article and respective comment based on parametric endpoint",
+    "queries": []
   }
 }

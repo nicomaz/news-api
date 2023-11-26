@@ -600,6 +600,13 @@ describe("DELETE /api/articles/:article_id", () => {
       expect(msg).toBe("Not found")
     })
   })
+  it("endpoint.json contains DELETE /api/articles/:article_id", () => {
+    return request(app)
+      .get("/api")
+      .then(({ body: { endpoints } }) => {
+        expect(endpoints).toHaveProperty("DELETE /api/articles/:article_id");
+      });
+  });
 });
 
 describe("GET /api/articles/:article_id/comments", () => {
