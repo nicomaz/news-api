@@ -3,7 +3,7 @@
 
   # 🌅 Sunshine News API
   
-  A REST API that enables users to perform CRUD operations on a database. 
+*A REST API that enables users to perform CRUD operations on a database.*
 
  </div>
 
@@ -28,9 +28,14 @@
 
   💡 **Applies the MVC pattern**
   - Due to Express' unopinionated nature, this project follows a MVC pattern to ensure a maintainable directory structure by organising controllers and models separately.
+
+   🗒️ **Planned workflow using a Kanban Board**
+   - As the project became more complex, I made use of a Kanban Board to better help roadmap building specific functionalities. 
+
+  <img width="1449" alt="Screenshot 2023-11-25 at 16 29 41" src="https://github.com/nicomaz/news-api/assets/139277771/15df2e9d-a031-4c8a-9446-a8b032d6a545">
   
   ## Requirements
-  To run this, you need Node.js `20.9.0` or above, and  Postgres `8.11.3` or above. 
+  — To run this, you need Node.js `20.9.0` or above, and  Postgres `8.11.3` or above.
 
   ## Project Set up 
   ### Cloning
