@@ -1,7 +1,7 @@
 
 <div align="center">
 
-  # 🌅 Sunshine News API
+  # 👾 Interbyte API
   
 *A REST API that enables users to perform CRUD operations on a database.*
 
@@ -9,7 +9,7 @@
 
   ## How is it built?
 
-  The goal of this project was to create and deploy an API that allows application data to be accessed programmatically. It provides server-side rendering for my next project: the front-end of Sunshine News. 
+  The goal of this project was to create and deploy an API that allows application data to be accessed programmatically. It provides server-side rendering for my next project: the front-end of Interbyte News. 
 
   📝 **Written in JavaScript, runs on the Node.js runtime environment**
   - Allowed me to develop non-blocking, asynchronous code by deploying promises, ensuring Sunshine News API runs smoothly. For further consideration, building end-to-end software in JavaScript will facilitate code re-usability and simplify front-end development. 
@@ -40,7 +40,7 @@
   ## Project Set up 
   ### Cloning
   - Run `git clone <url>` to clone this repo onto your machine
-  - Run `code news-api` to open Sunshine News API 
+  - Run `code news-api` to open Interbyte News API 
 
   ### Dependencies 
   - Run `npm install` to install dependencies 
@@ -64,8 +64,8 @@ Running the `app.test` file will seed the test database after each test.
 
 Now you can experiment with the code and tests!
 
-## Sunshine News API in action 
-Check out the hosted version of [Sunshine API](https://sunshine-news.onrender.com/api) 
+## Interbyte News API in action 
+Check out the hosted version of [Interbyte API](https://sunshine-news.onrender.com/api) 
   
   
 
