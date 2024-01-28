@@ -12,7 +12,7 @@
   The goal of this project was to create and deploy an API that allows application data to be accessed programmatically. It provides server-side rendering for my next project: the front-end of Interbyte News. 
 
   📝 **Written in JavaScript, runs on the Node.js runtime environment**
-  - Allowed me to develop non-blocking, asynchronous code by deploying promises, ensuring Sunshine News API runs smoothly. For further consideration, building end-to-end software in JavaScript will facilitate code re-usability and simplify front-end development. 
+  - Allowed me to develop non-blocking, asynchronous code by deploying promises, ensuring Interbyte News API runs smoothly. For further consideration, building end-to-end software in JavaScript will facilitate code re-usability and simplify front-end development. 
 
   🚀 **Utilises Express.js**
   - Simplified routing and handling client requests, improving the efficiency and readability of my code. 
