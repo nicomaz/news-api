@@ -17,8 +17,8 @@
   🚀 **Utilises Express.js**
   - Simplified routing and handling client requests, improving the efficiency and readability of my code. 
 
-  📈 **Assembles databases by using PSQL and Postgres**
-  - United JavaScript and PSQL through Postgres, which allowed for the building, seeding and querying of databases from a Node.js application. 
+  📈 **Assembles databases by using Postgres**
+  - United JavaScript and PSQL, which allowed for the building, seeding and querying of databases from a Node.js application. 
   
   🔒 **Mobilises Jest and Supertest for TDD**
    - Supertest provided a way of writing integration tests of endpoints, while Jest provided useful matchers, and a simple but robust framework for unit testing.  
